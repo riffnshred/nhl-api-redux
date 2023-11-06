@@ -9,6 +9,3 @@ while True:
     print(f"{g.away_team_name} {g.away_score} vs {g.home_score} {g.home_team_name} \nState: {g.game_state} - {g.period} - {g.clock} \nRunning: {g.is_clock_running}")
     time.sleep(10)
     
-class NHLScoreboard:
-    def __init__(self):
-        pass
