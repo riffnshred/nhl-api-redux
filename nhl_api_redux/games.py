@@ -141,9 +141,9 @@ class Game:
     def _hydrate(self, gamedata):
         if gamedata:
             self.away_team_id = gamedata["awayTeam"]["id"]
-            self.away_team_name = gamedata["awayTeam"]["name"]
+            self.away_team_name = gamedata["awayTeam"]["name"]["default"]
             self.home_team_id = gamedata["homeTeam"]["id"]
-            self.home_team_name = gamedata["homeTeam"]["name"]
+            self.home_team_name = gamedata["homeTeam"]["name"]["default"]
             self.away_score = gamedata['awayTeam'].get('score','0')
             self.home_score = gamedata['homeTeam'].get('score','0')
             
