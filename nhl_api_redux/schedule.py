@@ -108,12 +108,6 @@ def refresh_schedule(date=None):
     s = fetch_simplified(date)
     return s["data"]
 
-def team_scheduled(scheduled_games, id):
-    for game in scheduled_games:
-        if id in [game["awayTeam"]["id"], game["homeTeam"]["id"]]:
-            return game["id"]
-        
-    return False
     
 def test(date=None, teamid=9):
     try:

@@ -1,11 +1,11 @@
 import datetime
-from .domains import BASEWEB
+from .domains import BASE
 import requests
 import json
 from datetime import datetime, timezone, date
 
 def fetch_seasons():
-    url = f"{BASEWEB}/season"
+    url = f"{BASE}/stats/rest/en/season"
     data = None
     try:
         response = requests.get(url)
@@ -16,7 +16,14 @@ def fetch_seasons():
         print(f"Request to {url} failed: {e}")
         
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")    
-    return {"timestamp":timestamp, "data":data}
+    return {"timestamp":timestamp, "data":data["data"]}
+
+
+def get_current_season_details(seasons):
+    return seasons["data"][-1]
+
+def get_current_season(seasons):
+    return seasons["data"][-1]["id"]
 
 # This is a fail safe function that will return what should be the current nhl season id. 
 # This is in case the api does not respond.
@@ -28,13 +35,3 @@ def guess_current_season():
         start_year = today.year
     end_year = start_year + 1
     return int(f"{start_year}{end_year}")
-
-def get_current_season():
-    seasons = fetch_seasons()
-    try:
-        current_season = seasons["data"][-1]
-    except TypeError as e:
-        print(f"Failed to grab current season from API. Guessing the current NHL season based on current date.")
-        current_season = guess_current_season()
-    return current_season
-

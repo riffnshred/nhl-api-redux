@@ -1,4 +1,4 @@
-TEAMS_ID = {
+teams_id = {
     "Devils": 1,
     "Red Wings": 17,
     "Bruins": 6,
@@ -33,296 +33,329 @@ TEAMS_ID = {
     "Panthers": 13
 }
 
-TEAMS_INFO={
-   "1":{
-      "franchiseId":23,
-      "fullName":"New Jersey Devils",
-      "leagueId":133,
-      "rawTricode":"NJD",
-      "triCode":"NJD",
-      "name":"Devils",
-      "location":"New Jersey"
-   },
-   "17":{
-      "franchiseId":12,
-      "fullName":"Detroit Red Wings",
-      "leagueId":133,
-      "rawTricode":"DET",
-      "triCode":"DET",
-      "name":"Red Wings",
-      "location":"Detroit"
-   },
-   "6":{
-      "franchiseId":6,
-      "fullName":"Boston Bruins",
-      "leagueId":133,
-      "rawTricode":"BOS",
-      "triCode":"BOS",
-      "name":"Bruins",
-      "location":"Boston"
-   },
-   "52":{
-      "franchiseId":35,
-      "fullName":"Winnipeg Jets",
-      "leagueId":133,
-      "rawTricode":"WPG",
-      "triCode":"WPG",
-      "name":"Jets",
-      "location":"Winnipeg"
-   },
-   "28":{
-      "franchiseId":29,
-      "fullName":"San Jose Sharks",
-      "leagueId":133,
-      "rawTricode":"SJS",
-      "triCode":"SJS",
-      "name":"Sharks",
-      "location":"San Jose"
-   },
-   "5":{
-      "franchiseId":17,
-      "fullName":"Pittsburgh Penguins",
-      "leagueId":133,
-      "rawTricode":"PIT",
-      "triCode":"PIT",
-      "name":"Penguins",
-      "location":"Pittsburgh"
-   },
-   "14":{
-      "franchiseId":31,
-      "fullName":"Tampa Bay Lightning",
-      "leagueId":133,
-      "rawTricode":"TBL",
-      "triCode":"TBL",
-      "name":"Lightning",
-      "location":"Tampa Bay"
-   },
-   "4":{
-      "franchiseId":16,
-      "fullName":"Philadelphia Flyers",
-      "leagueId":133,
-      "rawTricode":"PHI",
-      "triCode":"PHI",
-      "name":"Flyers",
-      "location":"Philadelphia"
-   },
-   "9":{
-      "franchiseId":30,
-      "fullName":"Ottawa Senators",
-      "leagueId":133,
-      "rawTricode":"OTT",
-      "triCode":"OTT",
-      "name":"Senators",
-      "location":"Ottawa"
-   },
-   "10":{
-      "franchiseId":5,
-      "fullName":"Toronto Maple Leafs",
-      "leagueId":133,
-      "rawTricode":"TOR",
-      "triCode":"TOR",
-      "name":"Maple Leafs",
-      "location":"Toronto"
-   },
-   "7":{
-      "franchiseId":19,
-      "fullName":"Buffalo Sabres",
-      "leagueId":133,
-      "rawTricode":"BUF",
-      "triCode":"BUF",
-      "name":"Sabres",
-      "location":"Buffalo"
-   },
-   "19":{
-      "franchiseId":18,
-      "fullName":"St. Louis Blues",
-      "leagueId":133,
-      "rawTricode":"STL",
-      "triCode":"STL",
-      "name":"Blues",
-      "location":"St. Louis"
-   },
-   "12":{
-      "franchiseId":26,
-      "fullName":"Carolina Hurricanes",
-      "leagueId":133,
-      "rawTricode":"CAR",
-      "triCode":"CAR",
-      "name":"Hurricanes",
-      "location":"Carolina"
-   },
-   "53":{
-      "franchiseId":28,
-      "fullName":"Arizona Coyotes",
-      "leagueId":133,
-      "rawTricode":"ARI",
-      "triCode":"ARI",
-      "name":"Coyotes",
-      "location":"Arizona"
-   },
-   "20":{
-      "franchiseId":21,
-      "fullName":"Calgary Flames",
-      "leagueId":133,
-      "rawTricode":"CGY",
-      "triCode":"CGY",
-      "name":"Flames",
-      "location":"Calgary"
-   },
-   "8":{
-      "franchiseId":1,
-      "fullName":"Montréal Canadiens",
-      "leagueId":133,
-      "rawTricode":"MTL",
-      "triCode":"MTL",
-      "name":"Canadiens",
-      "location":"Montréal"
-   },
-   "15":{
-      "franchiseId":24,
-      "fullName":"Washington Capitals",
-      "leagueId":133,
-      "rawTricode":"WSH",
-      "triCode":"WSH",
-      "name":"Capitals",
-      "location":"Washington"
-   },
-   "26":{
-      "franchiseId":14,
-      "fullName":"Los Angeles Kings",
-      "leagueId":133,
-      "rawTricode":"LAK",
-      "triCode":"LAK",
-      "name":"Kings",
-      "location":"Los Angeles"
-   },
-   "23":{
-      "franchiseId":20,
-      "fullName":"Vancouver Canucks",
-      "leagueId":133,
-      "rawTricode":"VAN",
-      "triCode":"VAN",
-      "name":"Canucks",
-      "location":"Vancouver"
-   },
-   "21":{
-      "franchiseId":27,
-      "fullName":"Colorado Avalanche",
-      "leagueId":133,
-      "rawTricode":"COL",
-      "triCode":"COL",
-      "name":"Avalanche",
-      "location":"Colorado"
-   },
-   "18":{
-      "franchiseId":34,
-      "fullName":"Nashville Predators",
-      "leagueId":133,
-      "rawTricode":"NSH",
-      "triCode":"NSH",
-      "name":"Predators",
-      "location":"Nashville"
-   },
-   "24":{
-      "franchiseId":32,
-      "fullName":"Anaheim Ducks",
-      "leagueId":133,
-      "rawTricode":"ANA",
-      "triCode":"ANA",
-      "name":"Ducks",
-      "location":"Anaheim"
-   },
-   "54":{
-      "franchiseId":38,
-      "fullName":"Vegas Golden Knights",
-      "leagueId":133,
-      "rawTricode":"VGK",
-      "triCode":"VGK",
-      "name":"Golden Knights",
-      "location":"Vegas"
-   },
-   "2":{
-      "franchiseId":22,
-      "fullName":"New York Islanders",
-      "leagueId":133,
-      "rawTricode":"NYI",
-      "triCode":"NYI",
-      "name":"Islanders",
-      "location":"New York"
-   },
-   "55":{
-      "franchiseId":39,
-      "fullName":"Seattle Kraken",
-      "leagueId":133,
-      "rawTricode":"SEA",
-      "triCode":"SEA",
-      "name":"Kraken",
-      "location":"Seattle"
-   },
-   "25":{
-      "franchiseId":15,
-      "fullName":"Dallas Stars",
-      "leagueId":133,
-      "rawTricode":"DAL",
-      "triCode":"DAL",
-      "name":"Stars",
-      "location":"Dallas"
-   },
-   "30":{
-      "franchiseId":37,
-      "fullName":"Minnesota Wild",
-      "leagueId":133,
-      "rawTricode":"MIN",
-      "triCode":"MIN",
-      "name":"Wild",
-      "location":"Minnesota"
-   },
-   "22":{
-      "franchiseId":25,
-      "fullName":"Edmonton Oilers",
-      "leagueId":133,
-      "rawTricode":"EDM",
-      "triCode":"EDM",
-      "name":"Oilers",
-      "location":"Edmonton"
-   },
-   "16":{
-      "franchiseId":11,
-      "fullName":"Chicago Blackhawks",
-      "leagueId":133,
-      "rawTricode":"CHI",
-      "triCode":"CHI",
-      "name":"Blackhawks",
-      "location":"Chicago"
-   },
-   "3":{
-      "franchiseId":10,
-      "fullName":"New York Rangers",
-      "leagueId":133,
-      "rawTricode":"NYR",
-      "triCode":"NYR",
-      "name":"Rangers",
-      "location":"New York"
-   },
-   "29":{
-      "franchiseId":36,
-      "fullName":"Columbus Blue Jackets",
-      "leagueId":133,
-      "rawTricode":"CBJ",
-      "triCode":"CBJ",
-      "name":"Blue Jackets",
-      "location":"Columbus"
-   },
-   "13":{
-      "franchiseId":33,
-      "fullName":"Florida Panthers",
-      "leagueId":133,
-      "rawTricode":"FLA",
-      "triCode":"FLA",
-      "name":"Panthers",
-      "location":"Florida"
-   }
+teams_info={
+    "1": {
+        "id": 1,
+        "franchiseId": 23,
+        "fullName": "New Jersey Devils",
+        "leagueId": 133,
+        "rawTricode": "NJD",
+        "triCode": "NJD",
+        "name": "Devils",
+        "location": "New Jersey"
+    },
+    "17": {
+        "id": 17,
+        "franchiseId": 12,
+        "fullName": "Detroit Red Wings",
+        "leagueId": 133,
+        "rawTricode": "DET",
+        "triCode": "DET",
+        "name": "Red Wings",
+        "location": "Detroit"
+    },
+    "6": {
+        "id": 6,
+        "franchiseId": 6,
+        "fullName": "Boston Bruins",
+        "leagueId": 133,
+        "rawTricode": "BOS",
+        "triCode": "BOS",
+        "name": "Bruins",
+        "location": "Boston"
+    },
+    "52": {
+        "id": 52,
+        "franchiseId": 35,
+        "fullName": "Winnipeg Jets",
+        "leagueId": 133,
+        "rawTricode": "WPG",
+        "triCode": "WPG",
+        "name": "Jets",
+        "location": "Winnipeg"
+    },
+    "28": {
+        "id": 28,
+        "franchiseId": 29,
+        "fullName": "San Jose Sharks",
+        "leagueId": 133,
+        "rawTricode": "SJS",
+        "triCode": "SJS",
+        "name": "Sharks",
+        "location": "San Jose"
+    },
+    "5": {
+        "id": 5,
+        "franchiseId": 17,
+        "fullName": "Pittsburgh Penguins",
+        "leagueId": 133,
+        "rawTricode": "PIT",
+        "triCode": "PIT",
+        "name": "Penguins",
+        "location": "Pittsburgh"
+    },
+    "14": {
+        "id": 14,
+        "franchiseId": 31,
+        "fullName": "Tampa Bay Lightning",
+        "leagueId": 133,
+        "rawTricode": "TBL",
+        "triCode": "TBL",
+        "name": "Lightning",
+        "location": "Tampa Bay"
+    },
+    "4": {
+        "id": 4,
+        "franchiseId": 16,
+        "fullName": "Philadelphia Flyers",
+        "leagueId": 133,
+        "rawTricode": "PHI",
+        "triCode": "PHI",
+        "name": "Flyers",
+        "location": "Philadelphia"
+    },
+    "9": {
+        "id": 9,
+        "franchiseId": 30,
+        "fullName": "Ottawa Senators",
+        "leagueId": 133,
+        "rawTricode": "OTT",
+        "triCode": "OTT",
+        "name": "Senators",
+        "location": "Ottawa"
+    },
+    "10": {
+        "id": 10,
+        "franchiseId": 5,
+        "fullName": "Toronto Maple Leafs",
+        "leagueId": 133,
+        "rawTricode": "TOR",
+        "triCode": "TOR",
+        "name": "Maple Leafs",
+        "location": "Toronto"
+    },
+    "7": {
+        "id": 7,
+        "franchiseId": 19,
+        "fullName": "Buffalo Sabres",
+        "leagueId": 133,
+        "rawTricode": "BUF",
+        "triCode": "BUF",
+        "name": "Sabres",
+        "location": "Buffalo"
+    },
+    "19": {
+        "id": 19,
+        "franchiseId": 18,
+        "fullName": "St. Louis Blues",
+        "leagueId": 133,
+        "rawTricode": "STL",
+        "triCode": "STL",
+        "name": "Blues",
+        "location": "St. Louis"
+    },
+    "12": {
+        "id": 12,
+        "franchiseId": 26,
+        "fullName": "Carolina Hurricanes",
+        "leagueId": 133,
+        "rawTricode": "CAR",
+        "triCode": "CAR",
+        "name": "Hurricanes",
+        "location": "Carolina"
+    },
+    "53": {
+        "id": 53,
+        "franchiseId": 28,
+        "fullName": "Arizona Coyotes",
+        "leagueId": 133,
+        "rawTricode": "ARI",
+        "triCode": "ARI",
+        "name": "Coyotes",
+        "location": "Arizona"
+    },
+    "20": {
+        "id": 20,
+        "franchiseId": 21,
+        "fullName": "Calgary Flames",
+        "leagueId": 133,
+        "rawTricode": "CGY",
+        "triCode": "CGY",
+        "name": "Flames",
+        "location": "Calgary"
+    },
+    "8": {
+        "id": 8,
+        "franchiseId": 1,
+        "fullName": "Montréal Canadiens",
+        "leagueId": 133,
+        "rawTricode": "MTL",
+        "triCode": "MTL",
+        "name": "Canadiens",
+        "location": "Montréal"
+    },
+    "15": {
+        "id": 15,
+        "franchiseId": 24,
+        "fullName": "Washington Capitals",
+        "leagueId": 133,
+        "rawTricode": "WSH",
+        "triCode": "WSH",
+        "name": "Capitals",
+        "location": "Washington"
+    },
+    "26": {
+        "id": 26,
+        "franchiseId": 14,
+        "fullName": "Los Angeles Kings",
+        "leagueId": 133,
+        "rawTricode": "LAK",
+        "triCode": "LAK",
+        "name": "Kings",
+        "location": "Los Angeles"
+    },
+    "23": {
+        "id": 23,
+        "franchiseId": 20,
+        "fullName": "Vancouver Canucks",
+        "leagueId": 133,
+        "rawTricode": "VAN",
+        "triCode": "VAN",
+        "name": "Canucks",
+        "location": "Vancouver"
+    },
+    "21": {
+        "id": 21,
+        "franchiseId": 27,
+        "fullName": "Colorado Avalanche",
+        "leagueId": 133,
+        "rawTricode": "COL",
+        "triCode": "COL",
+        "name": "Avalanche",
+        "location": "Colorado"
+    },
+    "18": {
+        "id": 18,
+        "franchiseId": 34,
+        "fullName": "Nashville Predators",
+        "leagueId": 133,
+        "rawTricode": "NSH",
+        "triCode": "NSH",
+        "name": "Predators",
+        "location": "Nashville"
+    },
+    "24": {
+        "id": 24,
+        "franchiseId": 32,
+        "fullName": "Anaheim Ducks",
+        "leagueId": 133,
+        "rawTricode": "ANA",
+        "triCode": "ANA",
+        "name": "Ducks",
+        "location": "Anaheim"
+    },
+    "54": {
+        "id": 54,
+        "franchiseId": 38,
+        "fullName": "Vegas Golden Knights",
+        "leagueId": 133,
+        "rawTricode": "VGK",
+        "triCode": "VGK",
+        "name": "Golden Knights",
+        "location": "Vegas"
+    },
+    "2": {
+        "id": 2,
+        "franchiseId": 22,
+        "fullName": "New York Islanders",
+        "leagueId": 133,
+        "rawTricode": "NYI",
+        "triCode": "NYI",
+        "name": "Islanders",
+        "location": "New York"
+    },
+    "55": {
+        "id": 55,
+        "franchiseId": 39,
+        "fullName": "Seattle Kraken",
+        "leagueId": 133,
+        "rawTricode": "SEA",
+        "triCode": "SEA",
+        "name": "Kraken",
+        "location": "Seattle"
+    },
+    "25": {
+        "id": 25,
+        "franchiseId": 15,
+        "fullName": "Dallas Stars",
+        "leagueId": 133,
+        "rawTricode": "DAL",
+        "triCode": "DAL",
+        "name": "Stars",
+        "location": "Dallas"
+    },
+    "30": {
+        "id": 30,
+        "franchiseId": 37,
+        "fullName": "Minnesota Wild",
+        "leagueId": 133,
+        "rawTricode": "MIN",
+        "triCode": "MIN",
+        "name": "Wild",
+        "location": "Minnesota"
+    },
+    "22": {
+        "id": 22,
+        "franchiseId": 25,
+        "fullName": "Edmonton Oilers",
+        "leagueId": 133,
+        "rawTricode": "EDM",
+        "triCode": "EDM",
+        "name": "Oilers",
+        "location": "Edmonton"
+    },
+    "16": {
+        "id": 16,
+        "franchiseId": 11,
+        "fullName": "Chicago Blackhawks",
+        "leagueId": 133,
+        "rawTricode": "CHI",
+        "triCode": "CHI",
+        "name": "Blackhawks",
+        "location": "Chicago"
+    },
+    "3": {
+        "id": 3,
+        "franchiseId": 10,
+        "fullName": "New York Rangers",
+        "leagueId": 133,
+        "rawTricode": "NYR",
+        "triCode": "NYR",
+        "name": "Rangers",
+        "location": "New York"
+    },
+    "29": {
+        "id": 29,
+        "franchiseId": 36,
+        "fullName": "Columbus Blue Jackets",
+        "leagueId": 133,
+        "rawTricode": "CBJ",
+        "triCode": "CBJ",
+        "name": "Blue Jackets",
+        "location": "Columbus"
+    },
+    "13": {
+        "id": 13,
+        "franchiseId": 33,
+        "fullName": "Florida Panthers",
+        "leagueId": 133,
+        "rawTricode": "FLA",
+        "triCode": "FLA",
+        "name": "Panthers",
+        "location": "Florida"
+    }
 }
+
 
 import requests
 from datetime import datetime
@@ -353,8 +386,8 @@ def find_previous_and_next_games(season_schedule):
 
 class Team:
    def __init__(self, name):
-      self.id = TEAMS_ID[name]
-      self.info = TEAMS_INFO[str(self.id)]
+      self.id = teams_id[name]
+      self.info = teams_info[str(self.id)]
       self.abbrev = self.info["triCode"]
       self.name = self.info["name"]
       self.full_name = self.info["fullName"]

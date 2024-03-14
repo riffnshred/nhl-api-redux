@@ -29,52 +29,107 @@ def fetch_standings_exemple():
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")    
         return {"timestamp":timestamp, "data":data["standings"]}
     
+    
+"""
+    Sorting functions
 
-def get_division_standings(standings):
+    Reorganize the raw standing data into respective type of standings.
+    
+    Param:
+        - standings = raw standings data
+        - lean = if set to true, the function will filter the data of each team and only keep the basic info (Points, W-L-OTL, Last 10, Streak).
+"""    
+def filter_team_standing_data(team_data):
+    filtered_keys = [
+        "date",
+        "conferenceSequence",
+        "conferenceName",
+        "divisionSequence",
+        "divisionName",
+        "gameTypeId",
+        "gamesPlayed",
+        "leagueSequence",
+        "losses",
+        "otLosses",
+        "points",
+        "seasonId",
+        "streakCode",
+        "streakCount",
+        "teamName",
+        "teamCommonName",
+        "teamAbbrev",
+        "wildcardSequence",
+        "wins"
+    ]  # Add more keys if needed in the future
+
+    filtered_dict = {key: team_data[key] for key in filtered_keys if key in team_data}
+    return filtered_dict
+
+def sort_league_standings(standings, lean=False):
+    league = {"league":[]}
+    for team in standings["data"]:
+        if lean:
+            team = filter_team_standing_data(team)
+        league["league"].append(team)
+        
+    return league
+
+def sort_division_standings(standings, lean=False):
     divisions = {}
-    for team in standings:
-        division_name = team["divisionName"]
+    for team in standings["data"]:
+        division_name = team["divisionName"].lower()
         if division_name not in divisions:
             divisions[division_name] = []
+            
+        if lean:
+            team = filter_team_standing_data(team)
+            
         divisions[division_name].append(team)
-        
     return divisions
 
-def get_conference_standings(standings):
+def sort_conference_standings(standings, lean=False):
     conferences = {}
-    for team in standings:
-        conference_name = team["conferenceName"]
+    for team in standings["data"]:
+        conference_name = team["conferenceName"].lower()
         if conference_name not in conferences:
             conferences[conference_name] = []
+            
+        if lean:
+            team = filter_team_standing_data(team)
+            
         conferences[conference_name].append(team)
         
     return conferences
 
-def get_wildcard_standings(standings):
+def sort_wildcard_standings(standings, lean=False):
     wildcard = {}
-    for team in standings:
-        conference_name = team["conferenceName"]
-        division_name = team["divisionName"]
+    for team in standings["data"]:
+        conference_name = team["conferenceName"].lower()
+        division_name = team["divisionName"].lower()
         if conference_name not in wildcard:
-            wildcard[conference_name] = {"Wildcard":[]}
+            wildcard[conference_name] = {"wildcard":[]}
             
         if division_name not in wildcard[conference_name]:
             wildcard[conference_name][division_name] = []
         
+        if lean:
+            team = filter_team_standing_data(team)
+        
         if team["wildcardSequence"] == 0:
             wildcard[conference_name][division_name].append(team)
         else:
-            wildcard[conference_name]["Wildcard"].append(team)
+            wildcard[conference_name]["wildcard"].append(team)
     return wildcard
+
 
 
 
 def test_standings(standing_type="division"):
     standings = fetch_standings()
     print(standings)
-    division_standings = get_division_standings(standings["data"])
-    conference_standings = get_conference_standings(standings["data"])
-    wildcard_standings = get_wildcard_standings(standings["data"])
+    division_standings = filter_division_standings(standings["data"])
+    conference_standings = filter_conference_standings(standings["data"])
+    wildcard_standings = filter_wildcard_standings(standings["data"])
 
     if standing_type == "division":
         for division, teams in division_standings.items():
