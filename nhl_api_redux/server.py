@@ -5,7 +5,7 @@ import json
 from datetime import datetime, timezone, date
 
 
-def fetch_server_status():
+def ping_nhl_api():
     url = f"{BASE}/stats/rest/ping"
     data = None
     try:

@@ -54,7 +54,7 @@ def get_current_date():
     return current_date.strftime("%Y-%m-%d")
 
 # Get the schedule off the API. If a data is provided it need to be
-def fetch_standings(date=None):
+def fetch_schedule(date=None):
     try:
         if date:
             datetime.strptime(date, "%Y-%m-%d")
@@ -70,39 +70,71 @@ def fetch_standings(date=None):
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return {"timestamp":timestamp, "data":response.json()}
 
-def fetch_empty_standings():
+def fetch_empty_schedule():
     return EMPTY_SCHEDULE
 
-def fetch_standings_exemple():
+def fetch_schedule_exemple():
     with open("nhl_api_redux/endpoint_exemple/schedule_exemple.json", 'r') as file:
         data = json.load(file)
         return data
 
-def fetch_simplified(date=None):
-    raw_schedule = fetch_standings(date)
-    return simplified_schedule_data(raw_schedule)
-
-def simplified_schedule_data(data):
+def tailored_schedule(date=None):
+    raw_schedule = fetch_schedule(date)
     games = []
-    raw_schedule = data["data"]
-    if raw_schedule:
-        currentDate = raw_schedule["currentDate"]
-        for game in raw_schedule["games"]:
-            g = {
-                "id": game.get("id", ""),
-                "season": game.get("season", ""),
-                "gameType":game.get("gameType", ""),
-                "startTimeUTC": game.get("startTimeUTC", ""),
-                "gameScheduleState": game.get("gameScheduleState", ""),
-                "gameState": game.get("gameState", ""),
-                "clock": game.get("clock", ""),
-                "period": game.get("period", ""),
-                "periodDescriptor": game.get("periodDescriptor", {}),
-                "awayTeam": game.get("awayTeam", {}),
-                "homeTeam": game.get("homeTeam", {}),
-            }
-            games.append(g)
-    return {"timestamp":data["timestamp"], "currentDate":currentDate, "data":games}
+    raw_schedule = raw_schedule.get("data", {})
+    currentDate = raw_schedule.get("currentDate")
+    
+    for game in raw_schedule.get("games", []):
+        goals = [
+            {
+                "period": goal["period"],
+                "timeInPeriod": goal["timeInPeriod"],
+                "playerId": goal["playerId"],
+                "name": goal["name"],
+                "assists": [
+                    {
+                        "playerId": assist["playerId"],
+                        "name": assist["name"]["default"], 
+                        "assistsToDate": assist["assistsToDate"]
+                    } 
+                    for assist in goal.get("assists", [])
+                ]
+            } 
+            for goal in game.get("goals", [])
+        ]
+        
+        away_team = game.get("awayTeam", {})
+        home_team = game.get("homeTeam", {})
+        
+        g = {
+            "id": game.get("id"),
+            "season": game.get("season"),
+            "awayTeam": {
+                "id": away_team.get("id"),
+                "abbrev": away_team.get("abbrev"),
+                "name": away_team["name"].get("default"),
+                "sog": away_team.get("sog"),
+                "score": away_team.get("score"),
+            },
+            "homeTeam": {
+                "id": home_team.get("id"),
+                "abbrev": home_team.get("abbrev"),
+                "name": home_team["name"].get("default"),
+                "sog": home_team.get("sog"),
+                "score": home_team.get("score"),
+            },
+            "gameType": game.get("gameType", ""),
+            "startTimeUTC": game.get("startTimeUTC", ""),
+            "gameScheduleState": game.get("gameScheduleState", ""),
+            "gameState": game.get("gameState", ""),
+            "clock": game.get("clock", ""),
+            "period": game.get("period", ""),
+            "periodDescriptor": game.get("periodDescriptor", {}),
+            "goals": goals
+        }
+        games.append(g)
+        
+    return {"timestamp": raw_schedule.get("timestamp"), "currentDate": currentDate, "data": games}
 
 def refresh_schedule(date=None):
     s = fetch_simplified(date)

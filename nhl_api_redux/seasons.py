@@ -19,10 +19,38 @@ def fetch_seasons():
     return {"timestamp":timestamp, "data":data["data"]}
 
 
-def get_current_season_details(seasons):
-    return seasons["data"][-1]
+def filter_seasons_data(seasons_data):
+    filtered_keys = [
+        "id",
+        "endDate",
+        "numberOfGames",
+        "preseasonStartdate",
+        "regularSeasonEndDate",
+        "startDate",
+        "formattedSeasonId"
+    ]  # Add more keys if needed in the future
 
-def get_current_season(seasons):
+    filtered_data = {key: seasons_data[key] for key in filtered_keys if key in seasons_data}
+    return filtered_data
+
+def get_previous_season_details(seasons_data=None, lean=False):
+    seasons = fetch_seasons() if seasons_data is None else seasons_data
+    previous_season = seasons["data"][-2]
+    if lean:
+        previous_season = filter_seasons_data(previous_season)
+    
+    return current_season
+
+def get_current_season_details(seasons_data=None, lean=False):
+    seasons = fetch_seasons() if seasons_data is None else seasons_data
+    current_season = seasons["data"][-1]
+    if lean:
+        current_season = filter_seasons_data(current_season)
+    
+    return current_season
+
+def get_current_season(seasons_data=None):
+    seasons = fetch_seasons() if seasons_data is None else seasons_data
     return seasons["data"][-1]["id"]
 
 # This is a fail safe function that will return what should be the current nhl season id. 
