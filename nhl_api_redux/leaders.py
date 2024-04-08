@@ -35,21 +35,21 @@ def fetch_leaders(stat_type, category, position=None, rookie=False, season="curr
     
     base_url = "https://api.nhle.com/stats/rest/en/leaders/"
     endpoint = f"{category}/{stat_type}"
-    params = {"cayenneExp": f"season={season} and gameType={GAMETYPE[gametype]}"}
+    cayenneExp = f"season={season}%20and%20gameType={GAMETYPE[gametype]}"
 
     if position:
         if position not in ["D","C","L","R"]:
             raise ValueError('The position provided is invalid. Must be "D","C","L", or "R"')
         else:
-            params["cayenneExp"] += f" and player.positionCode = '{position}'"
+            cayenneExp += f"%20and%20player.positionCode='{position}'"
     if rookie:
-        params["cayenneExp"] += f" and isRookie = 'Y'"
+        cayenneExp += f"%20and%20isRookie='Y'"
 
-    url = base_url + endpoint
+    url = base_url + endpoint + "?cayenneExp=" + cayenneExp
     data = None
 
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url)
         response.raise_for_status()
         data = response.json()
     except requests.exceptions.RequestException as e:
@@ -58,14 +58,17 @@ def fetch_leaders(stat_type, category, position=None, rookie=False, season="curr
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return {"timestamp": timestamp, "leaders": data["data"]}
 
-def fetch_leaders_simplified(stat_type, category, position=None, rookie=None, season="current", gametype="regular"):
+
+
+
+def tailored_leaders(stat_type, category, position=None, rookie=None, season="current", gametype="regular"):
     raw_leaders = fetch_leaders(stat_type,category,position,rookie,season,gametype)
-    print(raw_leaders)
     leaders_simplified = []
     for player_data in raw_leaders["leaders"]:
         player = player_data['player']
         team = player_data['team']
         new_entry = {
+            f'{stat_type}':  player_data[f'{stat_type}'],
             'player_id': player['id'],
             'firstName': player['firstName'],
             'lastName': player['lastName'],

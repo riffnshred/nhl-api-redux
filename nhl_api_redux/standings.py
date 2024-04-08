@@ -6,25 +6,20 @@ from .domains import BASEWEB
 from pydantic import BaseModel, Field, ValidationError
 from typing import Dict
 
-EMPTY_STANTINGS = {"wildCardIndicator":False, "standings":[]}
+EMPTY_STANTINGS = {"wildCardIndicator":False}
 
 def fetch_standings():
     url = f"{BASEWEB}/standings/now"
     data = []
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an exception if the response status code is not in the 2xx range (e.g., 200 OK)
-        data = response.json()
-
-    except requests.exceptions.RequestException as e:
-        print(f"Request to {url} failed: {e}")
-    
+    response = requests.get(url)
+    response.raise_for_status()  # Raise an exception if the response status code is not in the 2xx range (e.g., 200 OK)
+    data = response.json()
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return {"timestamp":timestamp, "data":data["standings"]}
 
 def fetch_empty_standings():
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")    
-    return {"timestamp":timestamp, "data":EMPTY_STANTINGS}
+    return {"timestamp":timestamp, "data":EMPTY_STANTINGS["standings"]}
 
 def fetch_standings_exemple():
     with open("standings_exemple.json", 'r') as file:
@@ -43,27 +38,26 @@ def tailored_standings():
     
     tailored_data = [
         {
-            "points": team_record.get("points"),
-            "gamesPlayed": team_record.get("gamesPlayed"),
-            "wins": team_record.get("wins"),
-            "losses": team_record.get("losses"),
-            "otLosses": team_record.get("otLosses"),
-            "teamCommonName": team_record["teamCommonName"].get("default"),
-            "team_abbrev" : team_record["teamAbbrev"].get("default"),
-            "teamName": team_record["teamName"].get("default"),
-            "conferenceSequence": team_record.get("conferenceSequence"),
-            "conferenceName": team_record.get("conferenceName"),
-            "divisionSequence": team_record.get("divisionSequence"),
-            "divisionName": team_record.get("divisionName"),
-            "gameTypeId": team_record.get("gameTypeId"),
-            "leagueSequence": team_record.get("leagueSequence"),
-            "seasonId": team_record.get("seasonId"),
-            "streakCode": team_record.get("streakCode"),
-            "streakCount": team_record.get("streakCount"),
-            "wildcardSequence": team_record.get("wildcardSequence"),
-            "wins": team_record.get("wins")
-        } 
-        for team_record in raw_data
+            "points": team_record["points"],
+            "gamesPlayed": team_record["gamesPlayed"],
+            "wins": team_record["wins"],
+            "losses": team_record["losses"],
+            "otLosses": team_record["otLosses"],
+            "teamCommonName": team_record["teamCommonName"]["default"],
+            "team_abbrev" : team_record["teamAbbrev"]["default"],
+            "teamName": team_record["teamName"]["default"],
+            "conferenceSequence": team_record["conferenceSequence"],
+            "conferenceName": team_record["conferenceName"],
+            "divisionSequence": team_record["divisionSequence"],
+            "divisionName": team_record["divisionName"],
+            "gameTypeId": team_record["gameTypeId"],
+            "leagueSequence": team_record["leagueSequence"],
+            "seasonId": team_record["seasonId"],
+            "streakCode": team_record["streakCode"],
+            "streakCount": team_record["streakCount"],
+            "wildcardSequence": team_record["wildcardSequence"],
+            "wins": team_record["wins"]
+        }for team_record in raw_data
     ]
     
     return {"timestamp": timestamp, "data": tailored_data}

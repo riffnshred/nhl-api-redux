@@ -123,13 +123,13 @@ def tailored_schedule(date=None):
                 "sog": home_team.get("sog"),
                 "score": home_team.get("score"),
             },
-            "gameType": game.get("gameType", ""),
-            "startTimeUTC": game.get("startTimeUTC", ""),
-            "gameScheduleState": game.get("gameScheduleState", ""),
-            "gameState": game.get("gameState", ""),
-            "clock": game.get("clock", ""),
-            "period": game.get("period", ""),
-            "periodDescriptor": game.get("periodDescriptor", {}),
+            "gameType": game.get("gameType"),
+            "startTimeUTC": game.get("startTimeUTC"),
+            "gameScheduleState": game.get("gameScheduleState"),
+            "gameState": game.get("gameState"),
+            "clock": game.get("clock", None),
+            "period": game.get("period", None),
+            "periodDescriptor": game.get("periodDescriptor", None),
             "goals": goals
         }
         games.append(g)
