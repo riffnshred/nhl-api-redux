@@ -224,6 +224,27 @@ load_exemple("standings_exemple.json")
 load_exemple("game.json")
 ```
 
+## Testing against the live API
+
+The NHL changes these endpoints without notice, so the tests call the real API and
+check the fields the wrapper depends on.
+
+```bash
+uv run pytest
+```
+
+Payload shapes are checked against a fixed past game, date and season, so the
+suite passes in the offseason too. The run header and summary show the current
+season phase. During the preseason, extra `live_preseason` tests look at the games
+the API is serving that day, and the run is flagged, because the API is unstable
+then. `NHL_API_FORCE_SEASON_STATE=preseason` runs the suite as if it were the
+preseason.
+
+CI runs the suite daily
+([`.github/workflows/api-contract.yml`](.github/workflows/api-contract.yml)). A
+failure opens an `api-contract` issue, labelled `preseason` when relevant, and
+the next passing run closes it.
+
 ## Credits
 
 Endpoint discovery owes a lot to
