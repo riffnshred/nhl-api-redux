@@ -2,9 +2,7 @@ import requests
 import json
 from datetime import datetime, timezone
 from .domains import BASEWEB
-
-from pydantic import BaseModel, Field, ValidationError
-from typing import Dict
+from .examples import load_exemple
 
 EMPTY_STANTINGS = {"wildCardIndicator":False}
 
@@ -22,11 +20,10 @@ def fetch_empty_standings():
     return {"timestamp":timestamp, "data":EMPTY_STANTINGS["standings"]}
 
 def fetch_standings_exemple():
-    with open("standings_exemple.json", 'r') as file:
-        data = json.load(file)
-        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-            
-        return {"timestamp":timestamp, "data":data["standings"]}
+    """Return the bundled sample standings payload, for offline development."""
+    data = load_exemple("standings_exemple.json")
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return {"timestamp":timestamp, "data":data["standings"]}
  
 
 # tailored standings translate a lean standing data set into a predetermined key/value pair. 
@@ -55,6 +52,9 @@ def tailored_standings():
             "seasonId": team_record["seasonId"],
             "streakCode": team_record["streakCode"],
             "streakCount": team_record["streakCount"],
+            "l10Wins": team_record["l10Wins"],
+            "l10Losses": team_record["l10Losses"],
+            "l10OtLosses": team_record["l10OtLosses"],
             "wildcardSequence": team_record["wildcardSequence"],
             "wins": team_record["wins"]
         }for team_record in raw_data
@@ -140,67 +140,32 @@ def sort_conference_standings(standings_data=None):
     return conferences
 
 def sort_wildcard_standings(standings_data=None):
-    
+
     # If Standings data is provided, use that. Otherwise, request it from the API
     standings = tailored_standings() if standings_data is None else standings_data
-        
-    wildcard = {}
+
+    # First pass: collect divisions and wildcard per conference
+    conferences = {}
     for team in standings["data"]:
         conference_name = team["conferenceName"].lower()
         division_name = team["divisionName"].lower()
-        if conference_name not in wildcard:
-            wildcard[conference_name] = {"wildcard":[]}
-            
-        if division_name not in wildcard[conference_name]:
-            wildcard[conference_name][division_name] = []
-        
+        if conference_name not in conferences:
+            conferences[conference_name] = {"divisions": {}, "wildcard": []}
+        if division_name not in conferences[conference_name]["divisions"]:
+            conferences[conference_name]["divisions"][division_name] = []
+
         if team["wildcardSequence"] == 0:
-            wildcard[conference_name][division_name].append(team)
+            conferences[conference_name]["divisions"][division_name].append(team)
         else:
-            wildcard[conference_name]["wildcard"].append(team)
+            conferences[conference_name]["wildcard"].append(team)
+
+    # Second pass: build with correct key order (divisions first, wildcard last)
+    wildcard = {}
+    for conference_name, conf_data in conferences.items():
+        wildcard[conference_name] = {}
+        for division_name, teams in conf_data["divisions"].items():
+            wildcard[conference_name][division_name] = teams
+        wildcard[conference_name]["wildcard"] = sorted(
+            conf_data["wildcard"], key=lambda t: t["wildcardSequence"]
+        )
     return wildcard
-
-
-def test_standings(standing_type="division"):
-    standings = fetch_standings()
-    division_standings = filter_division_standings(standings["data"])
-    conference_standings = filter_conference_standings(standings["data"])
-    wildcard_standings = filter_wildcard_standings(standings["data"])
-
-    if standing_type == "division":
-        for division, teams in division_standings.items():
-            print(f"Division: {division}")
-            print("-------------------")
-            for team in teams:
-                team_name = team['placeName']['default']
-                points = team['points']
-                sequence = team["divisionSequence"]
-                print(f"{sequence} - {team_name}: {points} points")
-            print()
-            
-    if standing_type == "conference":
-        for conference, teams in conference_standings.items():
-            print(f"Conference: {conference}")
-            print("-------------------")
-            for team in teams:
-                print(f"{team['conferenceSequence']} - {team['teamName']['default']}: {team['points']}")
-                # Print other relevant information as needed
-            print()
-    
-    if standing_type == "wildcard":
-        for conference, divisions in wildcard_standings.items():
-            print(f"{conference}")
-            print("-------------------")
-            for d, teams in divisions.items():
-                print(f"{d}")
-                print("-------------------")
-                for team in teams:
-                    team_name = team['placeName']['default']
-                    points = team['points']
-                    if d == "Wildcard":
-                        sequence = team["wildcardSequence"]
-                    else:
-                        sequence = team["divisionSequence"]
-                    print(f"{sequence} - {team_name}: {points} points")
-                print()
-            print()

@@ -1,0 +1,479 @@
+{
+  "prevDate": "2025-10-04",
+  "currentDate": "2025-10-07",
+  "nextDate": "2025-10-08",
+  "gameWeek": [],
+  "oddsPartners": [],
+  "games": [
+    {
+      "id": 2025020001,
+      "season": 20252026,
+      "gameType": 2,
+      "gameDate": "2025-10-07",
+      "venue": {
+        "default": "Amerant Bank Arena"
+      },
+      "startTimeUTC": "2025-10-07T21:00:00Z",
+      "easternUTCOffset": "-04:00",
+      "venueUTCOffset": "-04:00",
+      "tvBroadcasts": [
+        {
+          "id": 309,
+          "market": "N",
+          "countryCode": "US",
+          "network": "ESPN",
+          "sequenceNumber": 10
+        },
+        {
+          "id": 282,
+          "market": "N",
+          "countryCode": "CA",
+          "network": "SN",
+          "sequenceNumber": 101
+        },
+        {
+          "id": 281,
+          "market": "N",
+          "countryCode": "CA",
+          "network": "TVAS",
+          "sequenceNumber": 109
+        }
+      ],
+      "gameState": "FUT",
+      "gameScheduleState": "OK",
+      "awayTeam": {
+        "id": 16,
+        "name": {
+          "default": "Blackhawks"
+        },
+        "abbrev": "CHI",
+        "record": "25-46-11",
+        "logo": "https://assets.nhle.com/logos/nhl/svg/CHI_light.svg"
+      },
+      "homeTeam": {
+        "id": 13,
+        "name": {
+          "default": "Panthers"
+        },
+        "abbrev": "FLA",
+        "record": "47-31-4",
+        "logo": "https://assets.nhle.com/logos/nhl/svg/FLA_light.svg"
+      },
+      "gameCenterLink": "/gamecenter/chi-vs-fla/2025/10/07/2025020001",
+      "neutralSite": false,
+      "venueTimezone": "US/Eastern",
+      "ticketsLink": "https://www.nhl.com/panthers/tickets/",
+      "ticketsLinkFr": "https://www.nhl.com/panthers/tickets/",
+      "teamLeaders": [
+        {
+          "id": 8477987,
+          "firstName": {
+            "default": "Ryan"
+          },
+          "lastName": {
+            "default": "Donato"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CHI/8477987.png",
+          "teamAbbrev": "CHI",
+          "sweaterNumber": 8,
+          "position": "C",
+          "category": "goals",
+          "value": 31
+        },
+        {
+          "id": 8477933,
+          "firstName": {
+            "default": "Sam"
+          },
+          "lastName": {
+            "default": "Reinhart"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/FLA/8477933.png",
+          "teamAbbrev": "FLA",
+          "sweaterNumber": 13,
+          "position": "C",
+          "category": "goals",
+          "value": 39
+        },
+        {
+          "id": 8484144,
+          "firstName": {
+            "default": "Connor"
+          },
+          "lastName": {
+            "default": "Bedard"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CHI/8484144.png",
+          "teamAbbrev": "CHI",
+          "sweaterNumber": 98,
+          "position": "C",
+          "category": "assists",
+          "value": 44
+        },
+        {
+          "id": 8477493,
+          "firstName": {
+            "default": "Aleksander"
+          },
+          "lastName": {
+            "default": "Barkov"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/FLA/8477493.png",
+          "teamAbbrev": "FLA",
+          "sweaterNumber": 16,
+          "position": "C",
+          "category": "assists",
+          "value": 51
+        },
+        {
+          "id": 8481519,
+          "firstName": {
+            "default": "Spencer"
+          },
+          "lastName": {
+            "default": "Knight"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CHI/8481519.png",
+          "teamAbbrev": "CHI",
+          "sweaterNumber": 30,
+          "position": "G",
+          "category": "wins",
+          "value": 17
+        },
+        {
+          "id": 8475683,
+          "firstName": {
+            "default": "Sergei",
+            "cs": "Sergej",
+            "sk": "Sergej"
+          },
+          "lastName": {
+            "default": "Bobrovsky",
+            "cs": "Bobrovskij",
+            "fi": "Bobrovski",
+            "sk": "Bobrovskij"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/FLA/8475683.png",
+          "teamAbbrev": "FLA",
+          "sweaterNumber": 72,
+          "position": "G",
+          "category": "wins",
+          "value": 33
+        }
+      ]
+    },
+    {
+      "id": 2025020002,
+      "season": 20252026,
+      "gameType": 2,
+      "gameDate": "2025-10-07",
+      "venue": {
+        "default": "Madison Square Garden"
+      },
+      "startTimeUTC": "2025-10-08T00:00:00Z",
+      "easternUTCOffset": "-04:00",
+      "venueUTCOffset": "-04:00",
+      "tvBroadcasts": [
+        {
+          "id": 309,
+          "market": "N",
+          "countryCode": "US",
+          "network": "ESPN",
+          "sequenceNumber": 10
+        },
+        {
+          "id": 282,
+          "market": "N",
+          "countryCode": "CA",
+          "network": "SN",
+          "sequenceNumber": 101
+        },
+        {
+          "id": 281,
+          "market": "N",
+          "countryCode": "CA",
+          "network": "TVAS",
+          "sequenceNumber": 109
+        }
+      ],
+      "gameState": "FUT",
+      "gameScheduleState": "OK",
+      "awayTeam": {
+        "id": 5,
+        "name": {
+          "default": "Penguins"
+        },
+        "abbrev": "PIT",
+        "record": "34-36-12",
+        "logo": "https://assets.nhle.com/logos/nhl/svg/PIT_light.svg"
+      },
+      "homeTeam": {
+        "id": 3,
+        "name": {
+          "default": "Rangers"
+        },
+        "abbrev": "NYR",
+        "record": "39-36-7",
+        "logo": "https://assets.nhle.com/logos/nhl/svg/NYR_light.svg"
+      },
+      "gameCenterLink": "/gamecenter/pit-vs-nyr/2025/10/07/2025020002",
+      "neutralSite": false,
+      "venueTimezone": "America/New_York",
+      "ticketsLink": "https://www.ticketmaster.com/event/3B0062F0AC18161C?brand=nhl&wt.mc_id=NHL_LEAGUE_NYR_SCORES_PG_GM1&utm_source=NHL.com&utm_medium=client&utm_campaign=NHL_LEAGUE_NYR&utm_content=SCORES_PG_GM1&CAMEFROM=CFC_RANGERS_WEB_NHL_SCORES_250825",
+      "ticketsLinkFr": "https://www.ticketmaster.com/event/3B0062F0AC18161C?brand=nhl&wt.mc_id=NHL_LEAGUE_NYR_SCORES_PG_GM1&utm_source=NHL.com&utm_medium=client&utm_campaign=NHL_LEAGUE_NYR&utm_content=SCORES_PG_GM1&CAMEFROM=CFC_RANGERS_WEB_NHL_SCORES_250825",
+      "teamLeaders": [
+        {
+          "id": 8476483,
+          "firstName": {
+            "default": "Rickard"
+          },
+          "lastName": {
+            "default": "Rakell"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/PIT/8476483.png",
+          "teamAbbrev": "PIT",
+          "sweaterNumber": 67,
+          "position": "R",
+          "category": "goals",
+          "value": 35
+        },
+        {
+          "id": 8478550,
+          "firstName": {
+            "default": "Artemi",
+            "cs": "Artěmij",
+            "sk": "Artemij"
+          },
+          "lastName": {
+            "default": "Panarin"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/NYR/8478550.png",
+          "teamAbbrev": "NYR",
+          "sweaterNumber": 10,
+          "position": "L",
+          "category": "goals",
+          "value": 37
+        },
+        {
+          "id": 8471675,
+          "firstName": {
+            "default": "Sidney"
+          },
+          "lastName": {
+            "default": "Crosby"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/PIT/8471675.png",
+          "teamAbbrev": "PIT",
+          "sweaterNumber": 87,
+          "position": "C",
+          "category": "assists",
+          "value": 58
+        },
+        {
+          "id": 8478550,
+          "firstName": {
+            "default": "Artemi",
+            "cs": "Artěmij",
+            "sk": "Artemij"
+          },
+          "lastName": {
+            "default": "Panarin"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/NYR/8478550.png",
+          "teamAbbrev": "NYR",
+          "sweaterNumber": 10,
+          "position": "L",
+          "category": "assists",
+          "value": 52
+        },
+        {
+          "id": 8477465,
+          "firstName": {
+            "default": "Tristan"
+          },
+          "lastName": {
+            "default": "Jarry"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/PIT/8477465.png",
+          "teamAbbrev": "PIT",
+          "sweaterNumber": 35,
+          "position": "G",
+          "category": "wins",
+          "value": 16
+        },
+        {
+          "id": 8478048,
+          "firstName": {
+            "default": "Igor"
+          },
+          "lastName": {
+            "default": "Shesterkin",
+            "cs": "Šesťorkin",
+            "fi": "Shestjorkin",
+            "sk": "Šesťorkin"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/NYR/8478048.png",
+          "teamAbbrev": "NYR",
+          "sweaterNumber": 31,
+          "position": "G",
+          "category": "wins",
+          "value": 27
+        }
+      ]
+    },
+    {
+      "id": 2025020003,
+      "season": 20252026,
+      "gameType": 2,
+      "gameDate": "2025-10-07",
+      "venue": {
+        "default": "Crypto.com Arena"
+      },
+      "startTimeUTC": "2025-10-08T02:30:00Z",
+      "easternUTCOffset": "-04:00",
+      "venueUTCOffset": "-07:00",
+      "tvBroadcasts": [
+        {
+          "id": 309,
+          "market": "N",
+          "countryCode": "US",
+          "network": "ESPN",
+          "sequenceNumber": 10
+        },
+        {
+          "id": 282,
+          "market": "N",
+          "countryCode": "CA",
+          "network": "SN",
+          "sequenceNumber": 101
+        },
+        {
+          "id": 281,
+          "market": "N",
+          "countryCode": "CA",
+          "network": "TVAS",
+          "sequenceNumber": 109
+        }
+      ],
+      "gameState": "FUT",
+      "gameScheduleState": "OK",
+      "awayTeam": {
+        "id": 21,
+        "name": {
+          "default": "Avalanche"
+        },
+        "abbrev": "COL",
+        "record": "49-29-4",
+        "logo": "https://assets.nhle.com/logos/nhl/svg/COL_light.svg"
+      },
+      "homeTeam": {
+        "id": 26,
+        "name": {
+          "default": "Kings"
+        },
+        "abbrev": "LAK",
+        "record": "48-25-9",
+        "logo": "https://assets.nhle.com/logos/nhl/svg/LAK_light.svg"
+      },
+      "gameCenterLink": "/gamecenter/col-vs-lak/2025/10/07/2025020003",
+      "neutralSite": false,
+      "venueTimezone": "America/Los_Angeles",
+      "ticketsLink": "https://www.nhl.com/kings/tickets/single-game-tickets",
+      "ticketsLinkFr": "https://www.nhl.com/kings/tickets/single-game-tickets",
+      "teamLeaders": [
+        {
+          "id": 8477492,
+          "firstName": {
+            "default": "Nathan"
+          },
+          "lastName": {
+            "default": "MacKinnon"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/COL/8477492.png",
+          "teamAbbrev": "COL",
+          "sweaterNumber": 29,
+          "position": "C",
+          "category": "goals",
+          "value": 32
+        },
+        {
+          "id": 8477942,
+          "firstName": {
+            "default": "Kevin"
+          },
+          "lastName": {
+            "default": "Fiala"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/LAK/8477942.png",
+          "teamAbbrev": "LAK",
+          "sweaterNumber": 22,
+          "position": "L",
+          "category": "goals",
+          "value": 35
+        },
+        {
+          "id": 8477492,
+          "firstName": {
+            "default": "Nathan"
+          },
+          "lastName": {
+            "default": "MacKinnon"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/COL/8477492.png",
+          "teamAbbrev": "COL",
+          "sweaterNumber": 29,
+          "position": "C",
+          "category": "assists",
+          "value": 84
+        },
+        {
+          "id": 8471685,
+          "firstName": {
+            "default": "Anze",
+            "cs": "Anže",
+            "sk": "Anže"
+          },
+          "lastName": {
+            "default": "Kopitar"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/LAK/8471685.png",
+          "teamAbbrev": "LAK",
+          "sweaterNumber": 11,
+          "position": "C",
+          "category": "assists",
+          "value": 46
+        },
+        {
+          "id": 8478406,
+          "firstName": {
+            "default": "Mackenzie"
+          },
+          "lastName": {
+            "default": "Blackwood"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/COL/8478406.png",
+          "teamAbbrev": "COL",
+          "sweaterNumber": 39,
+          "position": "G",
+          "category": "wins",
+          "value": 28
+        },
+        {
+          "id": 8475311,
+          "firstName": {
+            "default": "Darcy"
+          },
+          "lastName": {
+            "default": "Kuemper"
+          },
+          "headshot": "https://assets.nhle.com/mugs/nhl/20252026/LAK/8475311.png",
+          "teamAbbrev": "LAK",
+          "sweaterNumber": 35,
+          "position": "G",
+          "category": "wins",
+          "value": 31
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,8 @@
-import datetime
 from .domains import BASE
 import requests
 import json
 from datetime import datetime, timezone, date
+from .logger import logger
 
 
 def ping_nhl_api():
@@ -14,7 +14,7 @@ def ping_nhl_api():
         data = response.json()
 
     except requests.exceptions.RequestException as e:
-        print(f"Request to {url} failed: {e}")
+        logger.warning("Request to %s failed: %s", url, e)
         
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")    
     return {"timestamp":timestamp, "data":data}

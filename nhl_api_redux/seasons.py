@@ -5,6 +5,7 @@ from requests.exceptions import HTTPError, ConnectionError, Timeout
 import json
 from datetime import datetime, timezone, date
 import time
+from .logger import logger
 
 """
     Useful endpoints
@@ -27,7 +28,7 @@ def fetch_seasons():
     if 'data' in json_response:
         data = json_response["data"]
     else:
-        print(f"'data' not found in the response")
+        logger.warning("'data' not found in seasons response")
             
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")    
     return {"timestamp":timestamp, "data":data}
@@ -76,3 +77,71 @@ def guess_current_season():
         start_year = today.year
     end_year = start_year + 1
     return int(f"{start_year}{end_year}")
+
+def _season_date(season_details, key):
+    """Parse a date field out of a season descriptor. Returns None if absent or unparseable."""
+    raw = season_details.get(key)
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(str(raw).replace("Z", "+00:00")).date()
+    except ValueError:
+        logger.warning("Could not parse season date %s=%r", key, raw)
+        return None
+
+def get_season_state(season_details=None, today=None):
+    """
+    Derive the current phase of the NHL season from a season descriptor.
+
+    The API hands out dates but never a phase, so we work it out from the four
+    boundary dates it does give us.
+
+    Args:
+        season_details: A descriptor from tailored_seasons()["data"]. Fetched live
+            if omitted.
+        today: Date to evaluate against. Defaults to the local current date.
+
+    Returns:
+        Dict with the season id, the derived `state` (offseason/preseason/regular/
+        playoffs), `days_until_season` (int before the season starts, None once it
+        is under way), and the boundary dates as plain YYYY-MM-DD strings.
+    """
+    if season_details is None:
+        season_details = get_current_season_details()
+    if today is None:
+        today = date.today()
+
+    preseason_start = _season_date(season_details, "preseasonStartdate")
+    season_start = _season_date(season_details, "startDate")
+    regular_end = _season_date(season_details, "regularSeasonEndDate")
+    season_end = _season_date(season_details, "endDate")
+
+    if season_start and today < season_start:
+        state = "preseason" if preseason_start and today >= preseason_start else "offseason"
+    elif regular_end and today <= regular_end:
+        state = "regular"
+    elif season_end and today <= season_end:
+        state = "playoffs"
+    else:
+        state = "offseason"
+
+    # Only counted down before the puck drops. Once the season is under way the start
+    # date is behind us, and in the offseason tail the API may not have published the
+    # next season yet -- in both cases there is no honest number to report.
+    days_until_season = None
+    if state in ("offseason", "preseason") and season_start:
+        remaining = (season_start - today).days
+        if remaining >= 0:
+            days_until_season = remaining
+
+    return {
+        "season_id": season_details.get("id"),
+        "season": season_details.get("formattedSeasonId"),
+        "state": state,
+        "days_until_season": days_until_season,
+        "preseason_start": preseason_start.isoformat() if preseason_start else None,
+        "season_start": season_start.isoformat() if season_start else None,
+        "regular_season_end": regular_end.isoformat() if regular_end else None,
+        "season_end": season_end.isoformat() if season_end else None,
+        "number_of_games": season_details.get("numberOfGames"),
+    }

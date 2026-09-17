@@ -1,0 +1,33 @@
+[project]
+name = "nhl-api-redux"
+version = "0.2.0"
+description = "A Python wrapper for the NHL's api-web and stats REST endpoints"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Joel Joannisse" }]
+keywords = ["nhl", "hockey", "api", "wrapper", "sports"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Games/Entertainment",
+]
+dependencies = [
+    "requests>=2.31.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/riffnshred/nhl-api-redux"
+Repository = "https://github.com/riffnshred/nhl-api-redux"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["nhl_api_redux"]
+
+[tool.hatch.build.targets.sdist]
+include = ["nhl_api_redux", "README.md", "LICENSE"]

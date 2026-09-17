@@ -3,28 +3,44 @@ from .seasons import get_current_season
 import requests
 import json
 from datetime import datetime, timezone
+from .logger import logger
+
+r"""
+    ______ _____  ___ ______  ___  ___ _____                     
+    | ___ \  ___|/ _ \|  _  \ |  \/  ||  ___|                    
+    | |_/ / |__ / /_\ \ | | | | .  . || |__                      
+    |    /|  __||  _  | | | | | |\/| ||  __|                     
+    | |\ \| |___| | | | |/ /  | |  | || |___                     
+    \_| \_\____/\_| |_/___/   \_|  |_/\____/                     
+                                                                
+                                                                
+    ______ ___________ ___________ _____                         
+    | ___ \  ___|  ___|  _  | ___ \  ___|                        
+    | |_/ / |__ | |_  | | | | |_/ / |__                          
+    | ___ \  __||  _| | | | |    /|  __|                         
+    | |_/ / |___| |   \ \_/ / |\ \| |___                         
+    \____/\____/\_|    \___/\_| \_\____/                         
+                                                                
+                                                                
+    _____ _____ _   _ _____ _____ _   _ _   _ _____ _   _ _____ 
+    /  __ \  _  | \ | |_   _|_   _| \ | | | | |_   _| \ | |  __ \
+    | /  \/ | | |  \| | | |   | | |  \| | | | | | | |  \| | |  \/
+    | |   | | | | . ` | | |   | | | . ` | | | | | | | . ` | | __ 
+    | \__/\ \_/ / |\  | | |  _| |_| |\  | |_| |_| |_| |\  | |_\ \
+    \____/\___/\_| \_/ \_/  \___/\_| \_/\___/ \___/\_| \_/\____/
+                                                                
+                                                           
+
+    NOTE:
+
+    REPLACE THE api.nhle.com ENDPOINTS FOR THE skater-stats-leaders . details here:
+    https://github.com/Zmalski/NHL-API-Reference?tab=readme-ov-file#skaters
+    
+    Get skaters leader for assist, goals, points in a single endpoint
+    https://api-web.nhle.com/v1/skater-stats-leaders/20232024/2?categories=goals,assists,points&limit=5
 """
-    Top 10 Leaders per categories 
-        Goal:
-            Skaters endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/goals?cayenneExp=season=20232024%20and%20gameType=2
-            Defence endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/goals?cayenneExp=season=20232024%20and%20gameType=2%20and%20player.positionCode%20=%20%27D%27
-            Rookies endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/goals?cayenneExp=season=20232024%20and%20gameType=2%20and%20isRookie%20=%20%27Y%27
-        
-        Points:
-            Skaters endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/points?cayenneExp=season=20232024%20and%20gameType=2
-            Defence endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/points?cayenneExp=season=20232024%20and%20gameType=2%20and%20player.positionCode%20=%20%27D%27
-            Rookies endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/points?cayenneExp=season=20232024%20and%20gameType=2%20and%20isRookie%20=%20%27Y%27
-            
-        Assists:    
-            Skaters endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/assists?cayenneExp=season=20232024%20and%20gameType=2
-            Defence endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/assists?cayenneExp=season=20232024%20and%20gameType=2%20and%20player.positionCode%20=%20%27D%27
-            Rookies endpoint: https://api.nhle.com/stats/rest/en/leaders/skaters/assists?cayenneExp=season=20232024%20and%20gameType=2%20and%20isRookie%20=%20%27Y%27
-            
-        Goalies:            
-            Goal against endpoint: https://api.nhle.com/stats/rest/en/leaders/goalies/gaa?cayenneExp=season=20232024%20and%20gameType=2%20and%20gamesPlayed%20%3E=%2020
-            Save % endpoint : https://api.nhle.com/stats/rest/en/leaders/goalies/savePctg?cayenneExp=season=20232024%20and%20gameType=2%20and%20gamesPlayed%20%3E=%2020
-            Shutouts endpoint: https://api.nhle.com/stats/rest/en/leaders/goalies/shutouts?cayenneExp=season=20232024%20and%20gameType=2%20and%20gamesPlayed%20%3E=%2020
-"""     
+
+
 
 GAMETYPE = {"regular":2, "postseason":3}
 
@@ -53,7 +69,7 @@ def fetch_leaders(stat_type, category, position=None, rookie=False, season="curr
         response.raise_for_status()
         data = response.json()
     except requests.exceptions.RequestException as e:
-        print(f"Request to {url} failed: {e}")
+        logger.warning("Request to %s failed: %s", url, e)
 
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     return {"timestamp": timestamp, "leaders": data["data"]}

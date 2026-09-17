@@ -263,6 +263,14 @@ teams_branding = {
       "gamecenter":"#00205B",
       "contrast":"#00205B"
    },
+   "UTA":{
+      "primary":"#24b6ff",
+      "accent":"#FFFFFF",
+      "textOnPrimary":"#000000",
+      "textOnAccent":"#000000",
+      "gamecenter":"#000000",
+      "contrast":"#24b6ff"
+   },
    "VGK":{
       "primary":"#333F48",
       "accent":"#B9975B",
@@ -322,7 +330,8 @@ teams_id = {
     "Blackhawks": 16,
     "Rangers": 3,
     "Blue Jackets": 29,
-    "Panthers": 13
+    "Panthers": 13,
+    "Mammoth": 68
 }
 
 teams_info={
@@ -645,7 +654,17 @@ teams_info={
         "triCode": "FLA",
         "name": "Panthers",
         "location": "Florida"
-    }
+    },
+   "68":{
+      "id": 68,
+      "franchiseId": 40,
+      "fullName": "Utah Mammoth",
+      "leagueId": 133,
+      "rawTricode": "UTA",
+      "triCode": "UTA",
+      "name":"Mammoth",
+      "location": "Utah"
+   },
 }
 
 
@@ -653,6 +672,43 @@ import requests
 from datetime import datetime
 from .domains import BASEWEB
 from .status import game_schedule_is_irregular, game_is_scheduled, game_is_pre_game, game_is_over, game_is_critical, game_is_live
+from .logger import logger
+
+
+# Franchises that no longer ice a team but are kept in teams_info so historical
+# games still resolve. Excluded from the active-team helpers below.
+RETIRED_TEAM_ABBREVS = frozenset({"ARI"})
+
+
+def get_all_team_abbrevs(include_retired=False):
+   """
+   Get the list of active NHL team abbreviations.
+
+   Note that teams_branding is deliberately wider than this: it also carries
+   special-event codes (HGS, MAT, MCD, MKN) used by alternate jerseys, which are
+   not teams and have no roster.
+
+   Args:
+      include_retired: Also return franchises in RETIRED_TEAM_ABBREVS.
+
+   Returns:
+      List of team abbreviations (e.g., ["ANA", "BOS", "BUF", ...])
+   """
+   abbrevs = {team["triCode"] for team in teams_info.values()}
+   if not include_retired:
+      abbrevs -= RETIRED_TEAM_ABBREVS
+   return sorted(abbrevs)
+
+def fetch_season_schedule(abbrev):
+    """Fetch season schedule games list for a team by abbreviation."""
+    try:
+        response = requests.get(f"{BASEWEB}/club-schedule-season/{abbrev}/now")
+        response.raise_for_status()
+        return response.json().get("games", [])
+    except requests.exceptions.RequestException as e:
+        logger.warning("Failed to fetch schedule for %s: %s", abbrev, e)
+        return []
+
 
 def find_previous_and_next_games(season_schedule):
    current_datetime = datetime.strptime(datetime.today().strftime('%Y-%m-%d'), "%Y-%m-%d")
@@ -697,3 +753,31 @@ class Team:
       
       self.data = response.json()
       return self.data
+   
+   def get_team_stats(self, season="20242025", game_type_id=2):
+      """
+      Fetch complete team stats from NHL API
+      
+      Args:
+         season: Season ID (default: "20232024")
+         game_type_id: Game type (2 for regular season, 3 for playoffs)
+      
+      Returns:
+         Dict with all team stats or empty dict if failed
+      """
+      url = f"https://api.nhle.com/stats/rest/en/team/summary?sort=shotsForPerGame&cayenneExp=seasonId={season}%20and%20gameTypeId={game_type_id}%20and%20teamId={self.id}"
+      
+      try:
+         response = requests.get(url)
+         response.raise_for_status()
+         data = response.json()
+         
+         # Return all stats from the endpoint
+         if "data" in data and len(data["data"]) > 0:
+            return data["data"][0]  # Return complete team stats object
+         else:
+            return {}
+            
+      except requests.exceptions.RequestException as e:
+         logger.warning("Request to %s failed: %s", url, e)
+         return {}
