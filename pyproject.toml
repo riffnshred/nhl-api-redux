@@ -31,3 +31,15 @@ packages = ["nhl_api_redux"]
 
 [tool.hatch.build.targets.sdist]
 include = ["nhl_api_redux", "README.md", "LICENSE"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-rerunfailures>=16.6.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live_preseason: runs only while the NHL preseason is under way (skipped otherwise)",
+]
