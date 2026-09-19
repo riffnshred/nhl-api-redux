@@ -66,6 +66,11 @@ def get_current_season(seasons_data=None):
     seasons = tailored_seasons() if seasons_data is None else seasons_data
     return seasons["data"][0]["id"]
 
+def get_previous_season_id(season_id):
+    """Return the id of the season before `season_id` (20262027 -> 20252026)."""
+    start_year = int(str(season_id)[:4])
+    return int(f"{start_year - 1}{start_year}")
+
 # This is a fail safe function that will return what should be the current nhl season id. 
 # This is in case the api does not respond.
 

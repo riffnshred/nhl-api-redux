@@ -3,6 +3,7 @@ import json
 from datetime import datetime, timezone
 from .domains import BASEWEB
 from .logger import logger
+from .seasons import get_previous_season_id
 
 
 # Known Codes and states used on the API
@@ -120,6 +121,7 @@ class Game:
         self.home_team_stats = {}
         
         self.season_id = ""
+        self.team_stats_season_id = None
         
         self.ready = False
     
@@ -164,34 +166,48 @@ class Game:
     
     def _fetch_team_stats(self):
         """
-        Fetch stats for both teams using NHL API
+        Fetch regular-season stats for both teams using NHL API.
+
+        Before a season's first regular-season game (offseason, preseason) the
+        current season has no stats yet, so this falls back to the previous
+        season. `team_stats_season_id` records which season the stats are from.
         """
         if not self.season_id or not self.away_team_id or not self.home_team_id:
             logger.warning("Missing season_id or team IDs, cannot fetch team stats")
             return
-            
-        url = f"https://api.nhle.com/stats/rest/en/team/summary?cayenneExp=seasonId={self.season_id}%20and%20gameTypeId=2%20and%20(teamId={self.away_team_id}%20or%20teamId={self.home_team_id})"
-        
+
         try:
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            
-            if "data" in data and len(data["data"]) > 0:
-                # Separate stats by team ID
-                for team_data in data["data"]:
-                    team_id = team_data.get("teamId")
-                    if team_id == self.away_team_id:
-                        self.away_team_stats = team_data
-                    elif team_id == self.home_team_id:
-                        self.home_team_stats = team_data
-                        
-                logger.debug("Fetched stats for teams %s and %s", self.away_team_id, self.home_team_id)
-            else:
+            season_id = self.season_id
+            teams_data = self._query_team_stats(season_id)
+            if not teams_data:
+                season_id = get_previous_season_id(self.season_id)
+                logger.debug("No %s team stats yet, falling back to %s", self.season_id, season_id)
+                teams_data = self._query_team_stats(season_id)
+
+            if not teams_data:
                 logger.warning("No team stats data returned from API")
+                return
+
+            # Separate stats by team ID
+            for team_data in teams_data:
+                team_id = team_data.get("teamId")
+                if team_id == self.away_team_id:
+                    self.away_team_stats = team_data
+                elif team_id == self.home_team_id:
+                    self.home_team_stats = team_data
+            self.team_stats_season_id = season_id
+
+            logger.debug("Fetched %s stats for teams %s and %s", season_id, self.away_team_id, self.home_team_id)
 
         except requests.exceptions.RequestException as e:
             logger.warning("Failed to fetch team stats: %s", e)
+
+    def _query_team_stats(self, season_id):
+        """Return the regular-season stats rows for both teams in `season_id`."""
+        url = f"https://api.nhle.com/stats/rest/en/team/summary?cayenneExp=seasonId={season_id}%20and%20gameTypeId=2%20and%20(teamId={self.away_team_id}%20or%20teamId={self.home_team_id})"
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json().get("data", [])
         
     def update(self, auto_sync=True):
         """

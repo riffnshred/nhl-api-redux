@@ -90,6 +90,8 @@ while True:
   yourself.
 - Initialising a game also pulls both teams' season stats and builds their
   `W-L-OTL` records into `away_team_record` / `home_team_record`.
+  Before the season's first regular-season game (offseason, preseason) those come
+  from the previous season; `team_stats_season_id` says which season was used.
 - `Game(debug=True, debug_game_data_file="path/to/game.json")` replays a saved
   payload instead of calling the API.
 
@@ -147,6 +149,7 @@ in `teams_info` so historical games still resolve.
 ```python
 from nhl_api_redux.seasons import (
     get_current_season,          # 20252026
+    get_previous_season_id,      # 20262027 -> 20252026
     get_current_season_details,
     get_season_state,
 )
