@@ -699,10 +699,15 @@ def get_all_team_abbrevs(include_retired=False):
       abbrevs -= RETIRED_TEAM_ABBREVS
    return sorted(abbrevs)
 
-def fetch_season_schedule(abbrev):
-    """Fetch season schedule games list for a team by abbreviation."""
+def fetch_season_schedule(abbrev, season="now"):
+    """
+    Fetch season schedule games list for a team by abbreviation.
+
+    `season` is a season id (e.g. 20252026) or "now" for the season the API
+    currently considers active.
+    """
     try:
-        response = requests.get(f"{BASEWEB}/club-schedule-season/{abbrev}/now")
+        response = requests.get(f"{BASEWEB}/club-schedule-season/{abbrev}/{season}")
         response.raise_for_status()
         return response.json().get("games", [])
     except requests.exceptions.RequestException as e:
@@ -731,6 +736,14 @@ def find_previous_and_next_games(season_schedule):
          break
       
    return previous_game, next_game
+
+
+def find_last_completed_game(season_schedule):
+   """Return the last game of a schedule that is over, or None if none is."""
+   for game in reversed(season_schedule):
+      if game_is_over(game["gameState"]):
+         return game
+   return None
 
 class Team:
    def __init__(self, name):

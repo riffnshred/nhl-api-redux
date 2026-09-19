@@ -127,8 +127,13 @@ from nhl_api_redux.teams import (
     get_all_team_abbrevs,
     fetch_season_schedule,
     find_previous_and_next_games,
+    find_last_completed_game,
     Team,
 )
+
+fetch_season_schedule("MTL")             # the season the API considers current
+fetch_season_schedule("MTL", 20252026)   # a specific season
+find_last_completed_game(schedule)       # last game that is over, or None
 
 team = Team("Canadiens")
 team.abbrev            # "MTL"
