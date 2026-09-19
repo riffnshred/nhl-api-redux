@@ -112,6 +112,8 @@ points, regulation/OT records, streak, goal differential and last-ten
 (`l10Wins` / `l10Losses` / `l10OtLosses`). The `sort_*` helpers regroup that list;
 `sort_wildcard_standings()` returns each conference with its divisions first (top
 three each) and a `wildcard` list last, ordered by `wildcardSequence`.
+`tailored_standings("2026-04-17")` returns the standings as of a date instead, which is
+how you get a finished season's final table once `now` has moved on.
 
 ### `teams`
 

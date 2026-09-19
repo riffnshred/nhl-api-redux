@@ -6,8 +6,9 @@ from .examples import load_exemple
 
 EMPTY_STANTINGS = {"wildCardIndicator":False}
 
-def fetch_standings():
-    url = f"{BASEWEB}/standings/now"
+def fetch_standings(date=None):
+    """Fetch standings as of `date` (YYYY-MM-DD), or the current ones if omitted."""
+    url = f"{BASEWEB}/standings/{date or 'now'}"
     data = []
     response = requests.get(url)
     response.raise_for_status()  # Raise an exception if the response status code is not in the 2xx range (e.g., 200 OK)
@@ -28,8 +29,8 @@ def fetch_standings_exemple():
 
 # tailored standings translate a lean standing data set into a predetermined key/value pair. 
 # This is to provide a more robust set of data for the clients and make it easier to provide a fix in case the NHL API changes its structure.   
-def tailored_standings():
-    raw_standings = fetch_standings()
+def tailored_standings(date=None):
+    raw_standings = fetch_standings(date)
     timestamp = raw_standings.get("timestamp")
     raw_data = raw_standings.get("data", [])
     
