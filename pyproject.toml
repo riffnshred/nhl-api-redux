@@ -1,6 +1,6 @@
 [project]
 name = "nhl-api-redux"
-version = "0.3.0"
+version = "0.4.0"
 description = "A Python wrapper for the NHL's api-web and stats REST endpoints"
 readme = "README.md"
 requires-python = ">=3.11"
