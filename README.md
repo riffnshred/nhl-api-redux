@@ -50,10 +50,15 @@ Wraps `/v1/score/{date}`, which carries every game for a date plus live score,
 shots, clock and goal summaries.
 
 ```python
-from nhl_api_redux.scores import fetch_scores, tailored_scores, fetch_empty_scores
+from nhl_api_redux.scores import (
+    fetch_scores, fetch_scoreboard, tailored_scores, fetch_empty_scores,
+)
 
 fetch_scores(date=None, max_retries=3, retry_delay=1, debug_data=None, timeout=(5, 20))
-tailored_scores(date=None, debug_data=None, max_retries=3, retry_delay=1, timeout=(5, 20))
+fetch_scoreboard(date=None, max_retries=1, retry_delay=1, timeout=(3, 8))
+tailored_scores(date=None, debug_data=None, max_retries=3, retry_delay=1,
+                timeout=(5, 20), fallback=False, fallback_max_retries=1,
+                fallback_timeout=(3, 8))
 fetch_empty_scores()   # a valid, gameless payload — useful in the offseason
 ```
 
@@ -71,6 +76,35 @@ game carries `id`, `season`, `gameType`, `gameState`, `gameScheduleState`,
 `startTimeUTC`, `clock`, `period`, `periodDescriptor`, `goals`, and an `awayTeam` /
 `homeTeam` pair with `id`, `abbrev`, `name`, `sog`, `score` and `record`. Playoff
 games also carry `seriesStatus`.
+
+#### Falling back to the scoreboard
+
+`/v1/score/{date}` has gone dark for a single date while the rest of the host stayed
+healthy. `tailored_scores(fallback=True)` covers that: once `fetch_scores` has spent
+its retries, it makes one short-timeout attempt at `/v1/scoreboard/{date}` — which
+carries the same slate, live score, shots and clock — and maps it into the same game
+shape.
+
+```python
+scores = tailored_scores(fallback=True)
+if scores is None:
+    ...                              # both endpoints failed; hold your last value
+elif scores.get("source") == "scoreboard":
+    ...                              # degraded, but usable
+```
+
+- The envelope gains `"source": "scoreboard"` when the fallback produced the data.
+  A healthy `score/` reply has no `source` key at all.
+- `score/` stays the primary. The fallback never pre-empts it, and `None` still
+  means both endpoints failed, as distinct from a day with no games.
+- The fallback's view is thinner: `goals` is always `[]`, playoff games carry no
+  `seriesStatus` key, and finished games lose `sog` and `clock`. Games that are live
+  or not yet started are identical field for field. The next healthy poll restores
+  everything.
+- `fetch_scoreboard()` is available on its own. Use the dated form rather than
+  `scoreboard/now`, which resolves against the server's clock and disagrees with the
+  caller around the midnight rollover; the day is then found by matching the date in
+  `gamesByDate`, not by trusting the payload's `focusedDate`.
 
 ### `games` — tracking one live game
 

@@ -12,7 +12,8 @@ from conftest import check_keys
 from nhl_api_redux.games import Game, fetch
 from nhl_api_redux.leaders import fetch_leaders, tailored_leaders
 from nhl_api_redux.rosters import fetch_team_roster
-from nhl_api_redux.scores import fetch_scores, tailored_scores
+from nhl_api_redux import scores as scores_module
+from nhl_api_redux.scores import fetch_scores, fetch_scoreboard, tailored_scores
 from nhl_api_redux.seasons import tailored_seasons
 from nhl_api_redux.server import ping_nhl_api
 from nhl_api_redux.standings import (
@@ -20,13 +21,21 @@ from nhl_api_redux.standings import (
     sort_wildcard_standings,
     tailored_standings,
 )
-from nhl_api_redux.teams import Team, fetch_season_schedule, get_all_team_abbrevs
+from nhl_api_redux.teams import Team, fetch_season_schedule, get_all_team_abbrevs, teams_info
 
 # A completed season with data that will not move.
 PAST_SEASON = 20242025
 REGULAR_SEASON_DATE = "2025-03-15"
 PLAYOFF_DATE = "2025-05-01"
 REGULAR_SEASON_GAME_ID = 2024020500
+
+# Fields both endpoints must agree on for the same game, whatever its state.
+FALLBACK_STABLE_KEYS = ("season", "gameType", "startTimeUTC", "gameScheduleState")
+FALLBACK_STABLE_TEAM_KEYS = ("id", "abbrev", "name")
+# Fields the scoreboard drops once a game is over, or that move between two
+# fetches of a game in progress.
+FALLBACK_VOLATILE_KEYS = ("clock", "period", "periodDescriptor")
+IN_PROGRESS = ("LIVE", "CRIT")
 
 SCORE_GAME_KEYS = (
     "id", "season", "gameType", "startTimeUTC", "gameScheduleState", "gameState",
@@ -91,6 +100,127 @@ def test_scores_regular_season_shape():
     assert len(tailored["data"]) == len(games)
     for game in tailored["data"]:
         assert game["awayTeam"]["name"] and game["homeTeam"]["name"]
+
+
+def _fallback_scores(monkeypatch, date=None):
+    """tailored_scores' fallback path, with score/ forced to fail."""
+    monkeypatch.setattr(scores_module, "fetch_scores", lambda *a, **k: None)
+    return tailored_scores(date, fallback=True, fallback_max_retries=2)
+
+
+def test_scoreboard_carries_the_requested_day():
+    raw = fetch_scoreboard(REGULAR_SEASON_DATE)
+    assert raw, f"fetch_scoreboard({REGULAR_SEASON_DATE}) returned nothing"
+    check_keys(raw["data"], "gamesByDate", where="/scoreboard")
+    days = raw["data"]["gamesByDate"]
+    assert days, "scoreboard carries no days at all"
+    # The day is selected by matching the date, never by trusting focusedDate.
+    day = next((d for d in days if d.get("date") == REGULAR_SEASON_DATE), None)
+    assert day, (f"scoreboard/{REGULAR_SEASON_DATE} does not carry that date; "
+                 f"it covers {[d.get('date') for d in days]}")
+    assert day["games"], f"no games on {REGULAR_SEASON_DATE}"
+
+
+def test_scores_fallback_matches_the_score_endpoint(monkeypatch):
+    """
+    The fallback reproduces tailored_scores for the same date.
+
+    Games in progress are compared on their stable fields only: the two payloads
+    are fetched moments apart, so a clock or a shot total is allowed to move.
+    """
+    today = scores_module.get_current_date()
+    primary = tailored_scores(today)
+    assert primary is not None, "tailored_scores() for today returned nothing"
+    fallback = _fallback_scores(monkeypatch, today)
+    assert fallback is not None, "the scoreboard fallback for today returned nothing"
+
+    if not primary["data"]:
+        pytest.skip("no games today")
+
+    assert fallback["currentDate"] == primary["currentDate"]
+
+    scored = {game["id"]: game for game in primary["data"]}
+    fell_back = {game["id"]: game for game in fallback["data"]}
+    assert set(scored) == set(fell_back), (
+        f"score/ and scoreboard/ disagree on today's slate: "
+        f"only in score/ {sorted(set(scored) - set(fell_back))}, "
+        f"only in scoreboard/ {sorted(set(fell_back) - set(scored))}"
+    )
+
+    for game_id, want in scored.items():
+        got = fell_back[game_id]
+        where = f"game {game_id} ({want['gameState']})"
+        for key in FALLBACK_STABLE_KEYS:
+            assert got[key] == want[key], f"{where}: {key} is {got[key]!r}, score/ says {want[key]!r}"
+        for side in ("awayTeam", "homeTeam"):
+            for key in FALLBACK_STABLE_TEAM_KEYS:
+                assert got[side][key] == want[side][key], (
+                    f"{where}: {side}.{key} is {got[side][key]!r}, score/ says {want[side][key]!r}")
+            assert got[side]["record"] == want[side]["record"], f"{where}: {side}.record"
+
+        # Finished games lose their shots and clock on the scoreboard, and a game
+        # in progress moves between the two fetches.
+        if want["gameState"] != got["gameState"] or want["gameState"] in IN_PROGRESS:
+            continue
+        if want["gameState"] in ("FINAL", "OFF"):
+            continue
+        for key in FALLBACK_VOLATILE_KEYS:
+            assert got[key] == want[key], f"{where}: {key} is {got[key]!r}, score/ says {want[key]!r}"
+        for side in ("awayTeam", "homeTeam"):
+            for key in ("score", "sog"):
+                assert got[side][key] == want[side][key], f"{where}: {side}.{key}"
+
+
+def test_scores_fallback_names_are_nicknames(monkeypatch):
+    fallback = _fallback_scores(monkeypatch)
+    assert fallback is not None, "the scoreboard fallback for today returned nothing"
+    if not fallback["data"]:
+        pytest.skip("no games today")
+
+    for game in fallback["data"]:
+        for side in ("awayTeam", "homeTeam"):
+            team = game[side]
+            known = teams_info.get(str(team["id"]))
+            assert team["name"], f"game {game['id']} {side} has no name"
+            if known:
+                assert team["name"] == known["name"], (
+                    f"game {game['id']} {side} is {team['name']!r}, expected the "
+                    f"nickname {known['name']!r}")
+                assert team["name"] != known["fullName"], (
+                    f"game {game['id']} {side} carries the full name; "
+                    f"format_scores_for_display downstream keys off the nickname")
+
+
+def test_scores_fallback_shape_is_thinner_but_stable(monkeypatch):
+    fallback = _fallback_scores(monkeypatch)
+    assert fallback is not None, "the scoreboard fallback for today returned nothing"
+    if not fallback["data"]:
+        pytest.skip("no games today")
+
+    for game in fallback["data"]:
+        assert game["goals"] == [], "the scoreboard has no goal summaries to carry"
+        assert "seriesStatus" not in game, "the scoreboard has no seriesStatus to carry"
+
+
+def test_scores_source_key_marks_the_fallback(monkeypatch):
+    """`source` appears only when the fallback produced the data."""
+    healthy = tailored_scores()
+    assert healthy is not None, "tailored_scores() for today returned nothing"
+    assert "source" not in healthy, "a healthy score/ fetch must not be labelled"
+
+    monkeypatch.setattr(scores_module, "fetch_scores", lambda *a, **k: None)
+    assert tailored_scores() is None, "a failed fetch without fallback=True must return None"
+
+    degraded = tailored_scores(fallback=True)
+    assert degraded is not None, "the fallback did not run"
+    assert degraded["source"] == "scoreboard"
+    assert sorted(degraded) == ["currentDate", "data", "source", "timestamp"]
+
+
+def test_scores_return_none_when_both_endpoints_fail(monkeypatch):
+    monkeypatch.setattr(scores_module, "fetch_scores", lambda *a, **k: None)
+    monkeypatch.setattr(scores_module, "fetch_scoreboard", lambda *a, **k: None)
+    assert tailored_scores(fallback=True) is None
 
 
 def test_scores_playoffs_carry_series_status():
