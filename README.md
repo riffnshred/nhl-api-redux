@@ -27,7 +27,7 @@ With [uv](https://docs.astral.sh/uv/), pin it to a tag in your `pyproject.toml`:
 dependencies = ["nhl-api-redux"]
 
 [tool.uv.sources]
-nhl-api-redux = { git = "https://github.com/riffnshred/nhl-api-redux.git", tag = "v0.4.0" }
+nhl-api-redux = { git = "https://github.com/riffnshred/nhl-api-redux.git", tag = "v0.5.0" }
 ```
 
 ## Quick start
