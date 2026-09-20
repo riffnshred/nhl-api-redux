@@ -52,10 +52,19 @@ shots, clock and goal summaries.
 ```python
 from nhl_api_redux.scores import fetch_scores, tailored_scores, fetch_empty_scores
 
-fetch_scores(date=None, max_retries=3, retry_delay=1, debug_data=None)
-tailored_scores(date=None, debug_data=None)
+fetch_scores(date=None, max_retries=3, retry_delay=1, debug_data=None, timeout=(5, 20))
+tailored_scores(date=None, debug_data=None, max_retries=3, retry_delay=1, timeout=(5, 20))
 fetch_empty_scores()   # a valid, gameless payload — useful in the offseason
 ```
+
+Both return **`None`** when every attempt failed. That is deliberately distinct from a
+day with no games (which returns a payload with an empty `data` list): on a poll loop,
+hold your last known value when you get `None` instead of publishing an empty
+scoreboard over a good one. Every request carries a `(connect, read)` timeout, and
+HTTP errors, timeouts and malformed bodies are all retried.
+
+Callers on a tight poll interval should lower `max_retries` rather than raise the
+timeout — at the defaults a total outage costs up to `3 x 20s + 2 x retry_delay`.
 
 `tailored_scores()` returns `{"timestamp", "currentDate", "data": [...]}` where each
 game carries `id`, `season`, `gameType`, `gameState`, `gameScheduleState`,

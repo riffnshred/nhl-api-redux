@@ -1,5 +1,5 @@
 import datetime
-from .domains import BASE
+from .domains import BASE, DEFAULT_TIMEOUT
 import requests
 from requests.exceptions import HTTPError, ConnectionError, Timeout
 import json
@@ -22,7 +22,7 @@ def fetch_seasons():
     params = {
         "sort": '[{"property":"id","direction":"DESC"}]'
     }
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, timeout=DEFAULT_TIMEOUT)
     response.raise_for_status()  # Raise an exception if the response status code is not in the 2xx range (e.g., 200 OK)
     json_response = response.json()
     if 'data' in json_response:

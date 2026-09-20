@@ -1,7 +1,7 @@
 import requests
 import json
 from datetime import datetime, timezone
-from .domains import BASEWEB
+from .domains import BASEWEB, DEFAULT_TIMEOUT
 from .examples import load_exemple
 
 EMPTY_STANTINGS = {"wildCardIndicator":False}
@@ -10,7 +10,7 @@ def fetch_standings(date=None):
     """Fetch standings as of `date` (YYYY-MM-DD), or the current ones if omitted."""
     url = f"{BASEWEB}/standings/{date or 'now'}"
     data = []
-    response = requests.get(url)
+    response = requests.get(url, timeout=DEFAULT_TIMEOUT)
     response.raise_for_status()  # Raise an exception if the response status code is not in the 2xx range (e.g., 200 OK)
     data = response.json()
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

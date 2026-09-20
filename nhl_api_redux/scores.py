@@ -1,7 +1,7 @@
 import requests
 import json
 from datetime import datetime, timezone
-from .domains import BASEWEB
+from .domains import BASEWEB, DEFAULT_TIMEOUT
 from .logger import logger
 from .examples import load_exemple
 import time
@@ -56,49 +56,52 @@ def get_current_date():
     return datetime.now().strftime("%Y-%m-%d")
 
 # Get the scores off the API. If a data is provided it need to be
-def fetch_scores(date=None, max_retries=3, retry_delay=1, debug_data=None):
+def fetch_scores(date=None, max_retries=3, retry_delay=1, debug_data=None,
+                 timeout=DEFAULT_TIMEOUT):
+    """
+    Fetch the raw score payload for a date.
+
+    Returns {"timestamp": ..., "data": ...} on success, or None when every attempt
+    failed. None means "we could not find out", which is not the same as a day with no
+    games: callers on a poll loop should hold their last known value rather than
+    publish an empty scoreboard over a good one.
+
+    Raises ValueError if `date` is not YYYY-MM-DD.
+    """
     # If debug_data is True, return example data instead of making API call
     if debug_data:
+        timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        return {"timestamp": timestamp, "data": debug_data}
+
+    if date:
         try:
-            timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-            return {"timestamp": timestamp, "data": debug_data}
-        except Exception as err:
-            logger.error("Failed to load example data: %s", err)
-            return {}
-    
-    try:
-        if date:
             datetime.strptime(date, "%Y-%m-%d")
-        else:
-            date = get_current_date()
-        
-        date_url = f"{BASEWEB}/score/{date}"
+        except ValueError:
+            raise ValueError("Error - Scores - Fetch - Wrong date format provided, must be YYYY-MM-DD")
+    else:
+        date = get_current_date()
 
-        for attempt in range(max_retries):
-            try:
-                response = requests.get(date_url)
-                response.raise_for_status()
-                
-                timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-                return {"timestamp": timestamp, "data": response.json()}
-            except requests.exceptions.HTTPError as http_err:
-                logger.warning("HTTPError: %s - Retrying (%d/%d)...", http_err, attempt + 1, max_retries)
-                if attempt < max_retries - 1:
-                    time.sleep(retry_delay)
-                else:
-                    raise
-    except ValueError:
-        raise ValueError("Error - Scores - Fetch - Wrong date format provided, must be YYYY-MM-DD")
-    
-    except requests.exceptions.RequestException as req_err:
-        # Catch all requests-related errors
-        logger.error("Scores fetch request failed: %s", req_err)
-        return {}
+    date_url = f"{BASEWEB}/score/{date}"
 
-    except Exception as err:
-        # Catch any other unexpected errors
-        logger.error("Scores fetch unexpected error: %s", err)
-        return {}
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = requests.get(date_url, timeout=timeout)
+            response.raise_for_status()
+
+            timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            return {"timestamp": timestamp, "data": response.json()}
+        except requests.exceptions.RequestException as req_err:
+            # Covers HTTP errors, timeouts, connection failures and malformed JSON
+            # bodies alike (JSONDecodeError is a RequestException) - all of them are
+            # worth another try.
+            logger.warning("Scores fetch failed: %s - Retrying (%d/%d)...",
+                           req_err, attempt, max_retries)
+
+        if attempt < max_retries:
+            time.sleep(retry_delay)
+
+    logger.error("Scores fetch failed after %d attempts: %s", max_retries, date_url)
+    return None
 
 def fetch_empty_scores():
     return EMPTY_SCORES
@@ -107,9 +110,20 @@ def fetch_scores_exemple():
     """Return the bundled sample scores payload, for offline development."""
     return load_exemple("scores_exemple.json")
 
-# Fetch the Scores of the day and return a cleaner version. 
-def tailored_scores(date=None, debug_data=None):
-    raw_scores = fetch_scores(date, debug_data=debug_data)
+# Fetch the Scores of the day and return a cleaner version.
+def tailored_scores(date=None, debug_data=None, max_retries=3, retry_delay=1,
+                    timeout=DEFAULT_TIMEOUT):
+    """
+    Return a trimmed view of the day's scores, or None if the fetch failed.
+
+    The None is passed straight through from fetch_scores so that a caller can tell
+    an unreachable API apart from a day with no games on the schedule.
+    """
+    raw_scores = fetch_scores(date, max_retries=max_retries, retry_delay=retry_delay,
+                              debug_data=debug_data, timeout=timeout)
+    if raw_scores is None:
+        return None
+
     games = []
     scores_data = raw_scores.get("data", {})
     currentDate = scores_data.get("currentDate")
