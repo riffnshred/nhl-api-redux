@@ -252,6 +252,81 @@ from nhl_api_redux.status import (
 `game_is_critical()` covers the NHL's `CRIT` state — a close game inside the final
 minutes, when you want to poll faster.
 
+## Requests, caching and rate limits
+
+Every endpoint in the package goes out on one pooled `requests.Session`, so repeated
+calls reuse the connection instead of paying a TLS handshake each time. That happens
+whether you configure anything or not.
+
+Caching and pacing are **off by default** — an unconfigured package sends exactly what
+you ask it to, when you ask. Turn them on once, at startup:
+
+```python
+import nhl_api_redux
+
+nhl_api_redux.configure(
+    min_spacing=0.25,   # minimum seconds between any two requests
+    rate=1.0,           # sustained ceiling in requests/second
+    burst=20,           # how many may go out back to back
+    cooldown=60,        # seconds to stop sending after a 429
+    cache=True,         # reuse a response while the CDN copy is still fresh
+)
+```
+
+The cache is plain HTTP freshness: the NHL's CDN stamps each response with a
+`max-age`, and a repeat request inside that window is served from the copy already in
+hand. It is not a staleness tradeoff — the origin has nothing newer to give until the
+window expires. On a fast poll loop it removes most of your request volume for free.
+
+### Priority
+
+Not all of your requests matter equally. Mark the ones that do:
+
+```python
+from nhl_api_redux import priority, HIGH, LOW
+
+with priority(HIGH):
+    game.update()        # never paced, never refused, even during a cooldown
+
+with priority(LOW):
+    fetch_standings()    # first to yield when the bucket runs low
+```
+
+The default is `NORMAL`. `LOW` must leave more of the token bucket behind than
+`NORMAL` does, so background work cannot starve a live poll; `HIGH` draws on neither
+the bucket nor the spacing queue, because any budget it shares is a budget the rest
+can starve it out of. The fractions are yours to set via `configure(reserve=...)` —
+what your own jobs are worth is your policy, not the library's.
+
+`priority()` is a context manager over a `contextvar`, so it scopes to the block and
+is isolated per thread and per asyncio task. Nothing needs a `priority=` argument.
+
+### When a request is not sent
+
+A 429 opens a cooldown honouring `Retry-After`. For its duration, anything below
+`HIGH` raises `RateLimited` instead of being sent:
+
+```python
+from nhl_api_redux import RateLimited, is_paused, stats
+
+try:
+    scores = tailored_scores()
+except RateLimited:
+    ...  # cost no round trip
+```
+
+`RateLimited` subclasses `requests.exceptions.RequestException`, so existing handlers
+already catch it. If you back off on failures, use `is_paused()` to tell "the API is
+failing" from "we declined to send" — the second is already being paced here, and
+backing off on top of it backs off twice.
+
+`stats()` returns a counter snapshot (`sent`, `cached`, `skipped`, `delayed`,
+`rate_limits`, `rate_last_minute`, `paused_seconds`) suitable for a health payload, or
+`None` if you never called `configure()`.
+
+For a second session with its own settings, build an `NHLSession` directly. The
+package's own endpoint functions always use the default one.
+
 ## Logging
 
 The package logs to the `nhl_api_redux` logger and configures nothing itself, so by
