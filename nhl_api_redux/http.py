@@ -560,9 +560,18 @@ class NHLSession:
 SESSION = NHLSession()
 
 
-def configure(**kwargs):
-    """Turn on caching and pacing for the default session. See NHLSession.configure."""
-    return SESSION.configure(**kwargs)
+def configure(min_spacing=0.25, rate=1.0, burst=20, cooldown=60.0, max_cooldown=600.0,
+              probe_interval=0.0, cache=True, reserve=None, patience=None):
+    """
+    Turn on caching and pacing for the default session, or re-tune what is already on.
+
+    The parameters are spelled out rather than forwarded as **kwargs so that `help()`
+    and `inspect.signature()` show them. See `NHLSession.configure` for what each does.
+    """
+    return SESSION.configure(min_spacing=min_spacing, rate=rate, burst=burst,
+                             cooldown=cooldown, max_cooldown=max_cooldown,
+                             probe_interval=probe_interval, cache=cache,
+                             reserve=reserve, patience=patience)
 
 
 def is_paused():
