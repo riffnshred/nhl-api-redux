@@ -1,7 +1,8 @@
 import requests
 import json
 from datetime import datetime, timezone
-from .domains import BASEWEB, DEFAULT_TIMEOUT
+from .domains import BASEWEB
+from .http import _get
 from .logger import logger
 from .seasons import get_previous_season_id
 
@@ -45,7 +46,7 @@ def fetch(id):
 
     data = {}
     try:
-        response = requests.get(url, timeout=DEFAULT_TIMEOUT)
+        response = _get(url)
         response.raise_for_status()  # Raise an exception if the response status code is not in the 2xx range (e.g., 200 OK)
         data = response.json()
     except requests.exceptions.RequestException as e:
@@ -205,7 +206,7 @@ class Game:
     def _query_team_stats(self, season_id):
         """Return the regular-season stats rows for both teams in `season_id`."""
         url = f"https://api.nhle.com/stats/rest/en/team/summary?cayenneExp=seasonId={season_id}%20and%20gameTypeId=2%20and%20(teamId={self.away_team_id}%20or%20teamId={self.home_team_id})"
-        response = requests.get(url, timeout=DEFAULT_TIMEOUT)
+        response = _get(url)
         response.raise_for_status()
         return response.json().get("data", [])
         

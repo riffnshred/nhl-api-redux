@@ -1,4 +1,5 @@
-from .domains import BASE, DEFAULT_TIMEOUT
+from .domains import BASE
+from .http import _get
 import requests
 import json
 from datetime import datetime, timezone, date
@@ -9,7 +10,7 @@ def ping_nhl_api():
     url = f"{BASE}/stats/rest/ping"
     data = None
     try:
-        response = requests.get(url, timeout=DEFAULT_TIMEOUT)
+        response = _get(url)
         response.raise_for_status()  # Raise an exception if the response status code is not in the 2xx range (e.g., 200 OK)
         data = response.json()
 

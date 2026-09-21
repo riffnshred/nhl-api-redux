@@ -670,7 +670,8 @@ teams_info={
 
 import requests
 from datetime import datetime
-from .domains import BASEWEB, DEFAULT_TIMEOUT
+from .domains import BASEWEB
+from .http import _get
 from .status import game_schedule_is_irregular, game_is_scheduled, game_is_pre_game, game_is_over, game_is_critical, game_is_live
 from .logger import logger
 
@@ -707,7 +708,7 @@ def fetch_season_schedule(abbrev, season="now"):
     currently considers active.
     """
     try:
-        response = requests.get(f"{BASEWEB}/club-schedule-season/{abbrev}/{season}", timeout=DEFAULT_TIMEOUT)
+        response = _get(f"{BASEWEB}/club-schedule-season/{abbrev}/{season}")
         response.raise_for_status()
         return response.json().get("games", [])
     except requests.exceptions.RequestException as e:
@@ -757,12 +758,12 @@ class Team:
       self.previous_game, self.next_game = find_previous_and_next_games(self.season_schedule["games"])
       
    def roster(self):
-      response = requests.get(f"{BASEWEB}/roster/{self.abbrev}/current", timeout=DEFAULT_TIMEOUT)
+      response = _get(f"{BASEWEB}/roster/{self.abbrev}/current")
       self.data = response.json()
       return self.data
 
    def update_season_schedule(self):
-      response = requests.get(f"{BASEWEB}/club-schedule-season/{self.abbrev}/now", timeout=DEFAULT_TIMEOUT)
+      response = _get(f"{BASEWEB}/club-schedule-season/{self.abbrev}/now")
       
       self.data = response.json()
       return self.data
@@ -781,7 +782,7 @@ class Team:
       url = f"https://api.nhle.com/stats/rest/en/team/summary?sort=shotsForPerGame&cayenneExp=seasonId={season}%20and%20gameTypeId={game_type_id}%20and%20teamId={self.id}"
       
       try:
-         response = requests.get(url, timeout=DEFAULT_TIMEOUT)
+         response = _get(url)
          response.raise_for_status()
          data = response.json()
          

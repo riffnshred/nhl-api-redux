@@ -1,7 +1,8 @@
 import requests
 from datetime import datetime, timezone
 
-from .domains import BASEWEB, DEFAULT_TIMEOUT
+from .domains import BASEWEB
+from .http import _get
 from .logger import logger
 
 """
@@ -25,7 +26,7 @@ def fetch_team_roster(team_abbrev):
     url = f"{BASEWEB}/roster/{team_abbrev}/current"
 
     try:
-        response = requests.get(url, timeout=DEFAULT_TIMEOUT)
+        response = _get(url)
         response.raise_for_status()
         data = response.json()
 

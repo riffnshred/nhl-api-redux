@@ -2,6 +2,7 @@ import requests
 import json
 from datetime import datetime, timezone
 from .domains import BASEWEB, DEFAULT_TIMEOUT, FALLBACK_TIMEOUT
+from .http import _get
 from .logger import logger
 from .examples import load_exemple
 from .teams import teams_info
@@ -75,7 +76,7 @@ def _fetch_json(url, label, max_retries, retry_delay, timeout):
     """
     for attempt in range(1, max_retries + 1):
         try:
-            response = requests.get(url, timeout=timeout)
+            response = _get(url, timeout=timeout)
             response.raise_for_status()
 
             timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

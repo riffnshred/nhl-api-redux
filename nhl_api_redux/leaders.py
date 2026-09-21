@@ -1,4 +1,5 @@
-from .domains import BASE, DEFAULT_TIMEOUT
+from .domains import BASE
+from .http import _get
 from .seasons import get_current_season
 import requests
 import json
@@ -65,7 +66,7 @@ def fetch_leaders(stat_type, category, position=None, rookie=False, season="curr
     data = None
 
     try:
-        response = requests.get(url, timeout=DEFAULT_TIMEOUT)
+        response = _get(url)
         response.raise_for_status()
         data = response.json()
     except requests.exceptions.RequestException as e:
