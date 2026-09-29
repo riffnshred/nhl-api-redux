@@ -51,8 +51,9 @@ def tailored_standings(date=None):
             "gameTypeId": team_record["gameTypeId"],
             "leagueSequence": team_record["leagueSequence"],
             "seasonId": team_record["seasonId"],
-            "streakCode": team_record["streakCode"],
-            "streakCount": team_record["streakCount"],
+            # The API omits the streak until a team has played a game this season
+            "streakCode": team_record.get("streakCode"),
+            "streakCount": team_record.get("streakCount", 0),
             "l10Wins": team_record["l10Wins"],
             "l10Losses": team_record["l10Losses"],
             "l10OtLosses": team_record["l10OtLosses"],

@@ -55,9 +55,11 @@ STANDINGS_KEYS = (
     "points", "gamesPlayed", "wins", "losses", "otLosses",
     "teamCommonName.default", "teamAbbrev.default", "teamName.default",
     "conferenceSequence", "conferenceName", "divisionSequence", "divisionName",
-    "gameTypeId", "leagueSequence", "seasonId", "streakCode", "streakCount",
+    "gameTypeId", "leagueSequence", "seasonId",
     "l10Wins", "l10Losses", "l10OtLosses", "wildcardSequence",
 )
+# Absent until the team has played a game this season
+STANDINGS_STREAK_KEYS = ("streakCode", "streakCount")
 
 
 def test_ping():
@@ -258,6 +260,8 @@ def test_standings_shape():
         pytest.skip("standings/now is empty")
     for team in raw:
         check_keys(team, *STANDINGS_KEYS, where=f"standings {team.get('teamAbbrev')}")
+        if team["gamesPlayed"]:
+            check_keys(team, *STANDINGS_STREAK_KEYS, where=f"standings {team.get('teamAbbrev')}")
 
     tailored = tailored_standings()
     wildcard = sort_wildcard_standings(tailored)
