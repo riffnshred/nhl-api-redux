@@ -724,16 +724,15 @@ def find_previous_and_next_games(season_schedule):
    for i, game in enumerate(season_schedule):
       game_datetime = datetime.strptime(game['gameDate'], "%Y-%m-%d")
       if game_datetime >= current_datetime:
-         if i > 0:
-            if game_is_over(game["gameState"]):
-               previous_game = season_schedule[i]
-            else:
-               previous_game = season_schedule[i - 1]
-         if i < len(season_schedule) - 1:
-            if game_is_pre_game(game["gameState"]) and game_is_scheduled(game["gameScheduleState"]):
-               next_game = season_schedule[i]
-            else:
-               next_game = season_schedule[i + 1]
+         if game_is_over(game["gameState"]):
+            previous_game = season_schedule[i]
+         elif i > 0:
+            previous_game = season_schedule[i - 1]
+         # A game still to be played is "FUT" until shortly before puck drop, then "PRE"
+         if game_is_scheduled(game["gameState"]) and not game_schedule_is_irregular(game["gameScheduleState"]):
+            next_game = season_schedule[i]
+         elif i < len(season_schedule) - 1:
+            next_game = season_schedule[i + 1]
          break
       
    return previous_game, next_game
